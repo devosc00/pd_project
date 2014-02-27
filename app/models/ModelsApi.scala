@@ -3,6 +3,7 @@ package models
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick._
 import scala.slick.lifted.Tag
+import play.api.Play.current
 
 
 case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
@@ -51,21 +52,22 @@ object DbApi extends DAO {
 
 
   def authenticate(email: String, password: String): Option[Account] = { 
-    db.withSession { implicit session =>
+    DB.withSession { implicit session =>
     findByEmail(email).filter { account => password.equals(account.password) }
     }
   }
 
 
   def findByEmail(email: String): Option[Account] = {
-      db.withSession { implicit session =>
+      DB.withSession { implicit session =>
       accounts.where(_.email === email).firstOption
      }
   }
 
   def findById(id: Long): Option[Account] = {
-      db.withSession { implicit session =>
+      DB.withSession { implicit session =>
       accounts.where(_.id === id).firstOption
+    }
   }
   
 }
