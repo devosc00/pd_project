@@ -57,6 +57,10 @@ object DbApi extends DAO {
     }
   }
 
+/*  def getCompId (a: Account)(implicit s: Session): Long = {
+     user => user.get.compID
+  }*/
+
 
   def findByEmail(email: String): Option[Account] = {
       DB.withSession { implicit session =>
