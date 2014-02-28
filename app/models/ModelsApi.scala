@@ -3,6 +3,7 @@ package models
 import play.api.db.slick.Config.driver.simple._
 import play.api.db.slick._
 import scala.slick.lifted.Tag
+import play.api.Play.current
 
 
 case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long) {
@@ -66,6 +67,7 @@ object DbApi extends DAO {
   def findById(id: Long): Option[Account] = {
       DB.withSession { implicit session =>
       accounts.where(_.id === id).firstOption
+    }
   }
   
 }

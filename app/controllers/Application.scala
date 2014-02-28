@@ -86,9 +86,19 @@ trait AuthConfigImpl extends AuthConfig {
   def authorizationFailed(request: RequestHeader)(implicit ctx: ExecutionContext) = 
     Future.successful(Forbidden("brak dostępu"))
 
-  def authorize(user: User, authority: Authority) = Future.successful((user.permission, authority) match {
+  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext) = 
+    Future.successful ((user.permission, authority) match {
     case (Administrator, _) => true
     case (LocalAdministrator, LocalAdministrator) => true
+    case (Operator, Operator) => true
+    case (SalesCraft, SalesCraft) => true
     case _ => false
   })
+
+  /**
+   * Whether use the secure option or not use it in the cookie.
+   * However default is false, I strongly recommend using true in a production.
+   */
+  override lazy val cookieSecureOption: Boolean = play.api.Play.isProd(play.api.Play.current)
+
 }
