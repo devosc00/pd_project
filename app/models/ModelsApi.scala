@@ -51,20 +51,20 @@ object DbApi extends DAO {
 
 
   def authenticate(email: String, password: String): Option[Account] = { 
-    db.withSession { implicit session =>
+    DB.withSession { implicit session =>
     findByEmail(email).filter { account => password.equals(account.password) }
     }
   }
 
 
   def findByEmail(email: String): Option[Account] = {
-      db.withSession { implicit session =>
+      DB.withSession { implicit session =>
       accounts.where(_.email === email).firstOption
      }
   }
 
   def findById(id: Long): Option[Account] = {
-      db.withSession { implicit session =>
+      DB.withSession { implicit session =>
       accounts.where(_.id === id).firstOption
   }
   
