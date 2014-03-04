@@ -26,9 +26,12 @@ private[models] trait DAO {
 
 object DbApi extends DAO {
 
-  def insert (acc: Account)(implicit s: Session){
+  def insert (acc: Account) = {
+    DB.withSession { implicit session =>
   	accounts.insert(acc)
+    }
   }
+
 
   def insert (mat: Material)(implicit s: Session) {
   	materials.insert(mat)
@@ -68,10 +71,61 @@ object DbApi extends DAO {
      }
   }
 
+
   def findById(id: Long): Option[Account] = {
       DB.withSession { implicit session =>
       accounts.where(_.id === id).firstOption
     }
   }
+
+
+  def findByPk(id: Long) = {
+    DB.withSession { implicit session =>
+    for (n <- accounts if n.id === id) yield n
+    }
+  }
+
+
+  def count(implicit s: Session): Int =
+    Query(accounts.length).first
+
+ 
+  def count(filter: String)(implicit s: Session): Int =
+    Query(accounts.where(_.name.toLowerCase like filter.toLowerCase).length).first
+
+
+  def usersList(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[(Account, Company)] = {
+    DB.withSession { implicit session =>
+    val offset = pageSize * page
+    val query =
+      (for {
+        (account, company) <- accounts leftJoin companies on (_.compID === _.id)
+        if account.name.toLowerCase like filter.toLowerCase()
+      } yield (account, company))
+        .drop(offset)
+        .take(pageSize)
+
+    val totalRows = count(filter)
+    val result = query.list.map(row => (row._1, row._2))
+
+    Page(result, page, offset, totalRows)
+    }
+  }
+
+
+ def update(id: Long, acc: Account) {
+    DB.withSession { implicit session =>
+    val accToUpdate: Account = acc.copy(Some(id))
+    accounts.where(_.id === id).update(accToUpdate)
+    }
+  }
+
+
+def delete(id: Long) = {
+    DB.withSession { implicit session =>
+    accounts.where(_.id === id).delete
+    }
+  }
   
+
 }

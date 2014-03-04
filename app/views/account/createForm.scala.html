@@ -1,0 +1,46 @@
+@( accForm: Form[Account])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@main {
+    
+    <h1>Dodaj użytkownika</h1>
+    
+    @helper.form(routes.Users.save()) {
+        
+        <fieldset>
+        
+            @inputText(accForm("name"), '_label -> "Nazwa użytkownika")
+            @inputText(accForm("email"), '_label -> "Email")
+            @inputPassword(
+                accForm("password.main"), 
+                '_label -> "Hasło",
+                '_help -> "Hasło musi mieć conajmniej 6 liter. "
+            )
+            
+            @inputPassword(
+                accForm("password.confirm"), 
+                '_label -> "Powtórz Hasło",
+                '_help -> "Powtórz hasło raz jeszcze. ",
+                '_error -> accForm.error("password")
+            )
+            @inputText(accForm("position"), '_label -> "Stanowisko")
+
+            @select(
+                accForm("permission"), options("LocalAdministrator" -> "Lokalny Administrator", "Operator" -> "Operator", "SalesForce" -> "Handlowiec"),
+                 
+                '_label -> "", '_default -> "-- Ustaw prawa --"    
+            )
+
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Dodaj" class="btn primary"> albo 
+            <a href="@routes.Users.list()" class="btn">Anuluj</a> 
+        </div>
+        
+    }
+    
+}

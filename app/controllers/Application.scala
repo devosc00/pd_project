@@ -38,6 +38,7 @@ object Application extends Controller with LoginLogout with AuthConfigImpl {
       .verifying("Błędny adres email lub hasło", result => result.isDefined)
   }
 
+
 /*  def index = Action { implicit request => 
     val user = loggedIn
     println(user)
@@ -77,7 +78,7 @@ trait AuthConfigImpl extends AuthConfig {
   def resolveUser(id: Id)(implicit ctx: ExecutionContext) = Future.successful(DbApi.findById(id))
 
   def loginSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext) = 
-    Future.successful(Redirect(routes.Users.index))
+    Future.successful(Redirect(routes.ResolveUser.index))
 
   def logoutSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext) = 
     Future.successful(Redirect(routes.Application.login))

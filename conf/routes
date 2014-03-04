@@ -3,11 +3,25 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Users.index
+GET     /                           controllers.ResolveUser.index
 
 # Authentication
 GET     /login                       controllers.Application.login
 POST    /login                       controllers.Application.authenticate
 GET     /logout                      controllers.Application.logout
+
+
+GET      /users                    	 controllers.Users.list(p:Int ?= 0, s:Int ?= 2, f ?= "%")
+
+GET      /users/new           		 controllers.Users.create
+POST     /users/new               	 controllers.Users.save
+
+# Edit existing 
+GET     /users/:id                	 controllers.Users.edit(id:Long)
+POST    /users/:id                	 controllers.Users.update(id:Long)
+
+# Delete
+POST    /users/:id/delete         	 controllers.Users.delete(id:Long)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
