@@ -1,4 +1,4 @@
-@( accForm: Form[Account])
+@( accForm: Form[Account], companies: Seq[(String, String)])
 
 @import helper._
 
@@ -29,11 +29,19 @@
             @inputText(accForm("position"), '_label -> "Stanowisko")
 
             @select(
-                accForm("permission"), options("LocalAdministrator" -> "Lokalny Administrator", "Operator" -> "Operator", "SalesForce" -> "Handlowiec"),
+                accForm("compID"), 
+                companies, 
+                '_label -> "Firma", '_default -> "-- Wybierz firmę --",
+                '_showConstraints -> false
+            )
+
+            @select(
+                accForm("permission"), options("LocalAdministrator" -> "Lokalny Administrator", "Operator" -> "Operator", "SalesCraft" -> "Handlowiec"),
                  
                 '_label -> "", '_default -> "-- Ustaw prawa --"    
             )
 
+           
         </fieldset>
         
         <div class="actions">

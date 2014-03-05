@@ -13,6 +13,8 @@ GET     /logout                      controllers.Application.logout
 
 GET      /users                    	 controllers.Users.list(p:Int ?= 0, s:Int ?= 2, f ?= "%")
 
+GET      /projects/:id               controllers.Users.projList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
+
 GET      /users/new           		 controllers.Users.create
 POST     /users/new               	 controllers.Users.save
 

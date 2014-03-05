@@ -1,4 +1,4 @@
-@(currentPage: Page[(Account, Company)], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash)
+@(currentPage: Page[(Project, Account)], currentOrderBy: Int, currentFilter: String, compID: Long)(implicit flash: play.api.mvc.Flash)
 
 @****************************************
 * Helper generating navigation links    *
@@ -32,7 +32,7 @@
 
     <div id="actions">
         
-        @helper.form(action=routes.Users.list()) {
+        @helper.form(action=routes.Users.projList(compID)) {
             <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
@@ -41,7 +41,7 @@
         
     </div>
     
-    @Option(currentPage.items).filterNot(_.isEmpty).map { users =>
+    @Option(currentPage.items).filterNot(_.isEmpty).map { projects =>
         
         <table class="users zebra-striped">
             <thead>
@@ -54,18 +54,18 @@
             </thead>
             <tbody>
 
-                @users.map { 
-                    case (account, company) => {
+                @projects.map { 
+                    case (project, account) => {
                         <tr>
-                            <td><a href="@routes.Users.edit(account.id.get)">@account.name</a></td>
+                            <td><a href="@routes.Users.edit(account.id.get)">@project.name</a></td>
                             <td>
-                                @account.email
+                                @project.startDate
                             </td>
                             <td>
-                                @account.position
+                                @project.endDate
                             </td>
                             <td>
-                                @company.name
+                                @account.name
                             </td>
                         </tr>
                     }
@@ -86,7 +86,7 @@
                     </li>
                 }
                 <li class="current">
-                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + users.size) of @currentPage.total</a>
+                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + projects.size) of @currentPage.total</a>
                 </li>
                 @currentPage.next.map { page =>
                     <li class="next">
@@ -103,7 +103,7 @@
     }.getOrElse {
         
         <div class="well">
-            <em>Nie ma użytkownika</em>
+            <em>Nie ma projektu</em>
         </div>
         
     }

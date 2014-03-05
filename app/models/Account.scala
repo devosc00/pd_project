@@ -10,11 +10,11 @@ import scala.slick.lifted.Tag
 case class Account (
   id: Option[Long], 
   email: String, 
-  password: String, 
+  password: Option[String], 
   name: String,
   position: String, 
   permission: Permission, 
-  compID: Long )
+  compID:Option[Long] )
 
 
 class Accounts(tag: Tag) extends Table[Account](tag, "ACCOUNT") {
@@ -26,7 +26,7 @@ class Accounts(tag: Tag) extends Table[Account](tag, "ACCOUNT") {
   def permission = column[Permission] ("PERMISSION", O.NotNull)
   def compID = column[Long] ("COMP_ID")
 
-  def * = (id.?, email, password, name, position, permission, compID) <> (Account.tupled, Account.unapply)
+  def * = (id.?, email, password.?, name, position, permission, compID.?) <> (Account.tupled, Account.unapply)
 
   def companyFK = foreignKey("COMP_FK", compID, DbApi.companies)(_.id)
   }

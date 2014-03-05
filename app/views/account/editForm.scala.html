@@ -9,6 +9,8 @@
     <h1>Edycja</h1>
     
     @form(routes.Users.update(pk)) {
+
+   
     
         <fieldset>
         
@@ -17,7 +19,7 @@
             @inputText(userForm("position"), '_label -> "Stanowisko")
             @select(
                 userForm("permission"), options("LocalAdministrator" -> "Lokalny Admin", 
-                    "Operator" -> "Operator", "SalesForce" -> "Handlowiec"),
+                    "Operator" -> "Operator", "SalesCraft" -> "Handlowiec"),
                  
                 '_label -> "", '_default -> "-- Ustaw prawa --"    
             )
@@ -25,6 +27,8 @@
           
             
         </fieldset>
+
+
         
         <div class="actions">
             <input type="submit" value="Zapisz" class="btn primary"> albo

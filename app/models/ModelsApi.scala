@@ -45,7 +45,7 @@ object DbApi extends DAO {
   	projects.insert(proj)
   }
 
-  def options(implicit s: Session): Seq[(String, String)] = {
+  def optionsMat(implicit s: Session): Seq[(String, String)] = {
     val query = (for {
       material <- materials
       } yield (material.id, material.name)).sortBy(_._2)
@@ -53,8 +53,17 @@ object DbApi extends DAO {
     	query.list.map(row => (row._1.toString, row._2))
   }
 
+  def optionsComp: Seq[(String, String)] = {
+    DB.withSession { implicit session =>
+    val query = (for {
+      company <- companies
+      } yield (company.id, company.name)).sortBy(_._2)
+      query.list.map(row => (row._1.toString, row._2))
+    }
+  }
 
-  def authenticate(email: String, password: String): Option[Account] = { 
+
+  def authenticate(email: String, password: Option[String]): Option[Account] = { 
     DB.withSession { implicit session =>
     findByEmail(email).filter { account => password.equals(account.password) }
     }
@@ -79,11 +88,11 @@ object DbApi extends DAO {
   }
 
 
-  def findByPk(id: Long) = {
+/*  def findByPk(id: Long) = {
     DB.withSession { implicit session =>
     for (n <- accounts if n.id === id) yield n
     }
-  }
+  }*/
 
 
   def count(implicit s: Session): Int =
@@ -113,9 +122,31 @@ object DbApi extends DAO {
   }
 
 
+  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[(Project, Account)] = {
+    DB.withSession { implicit session =>
+    val offset = pageSize * page
+    val query =
+      (for {
+        (project, account) <- projects leftJoin accounts.filter(_.compID === id) on (_.accID === _.id)
+        if project.name.toLowerCase like filter.toLowerCase()
+      } yield (project, account))
+        .drop(offset)
+        .take(pageSize)
+
+    val totalRows = count(filter)
+    val result = query.list.map(row => (row._1, row._2))
+
+    Page(result, page, offset, totalRows)
+    }
+  }
+
+
  def update(id: Long, acc: Account) {
     DB.withSession { implicit session =>
-    val accToUpdate: Account = acc.copy(Some(id))
+    val x = findById(id)
+    val accToUpdate: Account = new Account(x.get.id, acc.email, x.get.password, acc.name, 
+      acc.position, acc.permission, x.get.compID)
+    println("copy " + accToUpdate)
     accounts.where(_.id === id).update(accToUpdate)
     }
   }

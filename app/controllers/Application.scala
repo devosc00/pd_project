@@ -34,7 +34,8 @@ object Application extends Controller with LoginLogout with AuthConfigImpl {
 
 
   val loginForm = Form {
-    mapping("email" -> email, "password" -> text)(DbApi.authenticate)(_.map(u => (u.email, "")))
+    mapping("email" -> email, "password" -> optional(text))(DbApi.authenticate)(_.map(u => 
+      (u.email, Option[String](""))))
       .verifying("Błędny adres email lub hasło", result => result.isDefined)
   }
 

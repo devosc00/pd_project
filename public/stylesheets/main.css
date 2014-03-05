@@ -22,21 +22,21 @@ section#main .topRight {
     top: 70px;
 }
 
-table.computers em {
+table.users em {
     color: #aaa;
 }
 
-table.computers .col3, table.computers .col4 {
+table.users .col3, table.users .col4 {
     width: 10%;
     min-width: 100px;
 }
 
-table.computers .col5 {
+table.users .col5 {
     width: 30%;
     min-width: 300px;
 }
 
-table.computers .header a {
+table.users .header a {
 }
 
 #actions {

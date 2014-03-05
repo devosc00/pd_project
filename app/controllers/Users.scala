@@ -31,10 +31,10 @@ object ResolveUser extends Controller with AuthenticationElement with AuthConfig
 //widoki po zalogowaniu w zależności od użytkownika
   def index = StackAction { implicit request =>
     val user: User = loggedIn
-    println(user.permission)
+    println(user.compID.get)
     val perm: SimpleResult = user.permission match {
-    	case Administrator => Redirect(routes.Users.create)
-    	case LocalAdministrator => Ok("hello local boss " + user.name)
+    	case Administrator => Redirect(routes.Users.list(0, 2, ""))
+    	case LocalAdministrator => Redirect(routes.Users.projList(user.compID.get, 0, 2, ""))
     	case Operator => Ok("hello operator " + user.name) 
     	case SalesCraft => Ok ("hello sales man " + user.name)
     	case _ => Redirect(routes.Application.login)
@@ -54,31 +54,31 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
       "id" -> optional(longNumber),
       "email" -> nonEmptyText,
       "password" -> tuple(
-          "main" -> text(minLength = 6),
-          "confirm" -> text
+          "main" -> optional(text(minLength = 6)),
+          "confirm" -> optional(text)
       ).verifying(
         "Hasła są różne", passwords => passwords._1 == passwords._2 ),
       "name" -> nonEmptyText,
       "position" -> nonEmptyText,
       "permission" -> text,
-      "compID" -> ignored(Long)
+      "compID" -> optional(longNumber)
       )((id, email, password, name, position, permission, compID) => 
-         Account(id, email, password._1, name, position, Permission.valueOf(permission),compID.asInstanceOf[Long] ))
-       ((a: Account) => Some((a.id, a.email, (a.password,""), a.name, a.position, a.permission.toString, a.compID.asInstanceOf[Long.type])))
+         Account(id, email, password._1, name, position, Permission.valueOf(permission),compID ))
+       ((a: Account) => Some((a.id, a.email, (a.password, Option[String]("")), a.name, a.position, a.permission.toString, a.compID)))
         )
 
- val upForm = Form[Account](
+ val upForm = Form(
     mapping(
       "id" -> optional(longNumber),
       "email" -> text,
-      "password" -> ignored("": String),
+      "password" -> optional(text),
       "name" -> text,
       "position" -> text,
       "permission" -> text,
-      "compID" -> ignored(Long)
+      "compID" -> optional(longNumber)
       )((id, email, password, name, position, permission, compID) => 
-         Account(id, email, password, name, position, Permission.valueOf(permission), compID.asInstanceOf[Long]))
-       ((a: Account) => Some((a.id, a.email, a.password, a.name, a.position, a.permission.toString, a.compID.asInstanceOf[Long.type])))
+         Account(id, email, password, name, position, Permission.valueOf(permission),compID ))
+       ((a: Account) => Some((a.id, a.email, a.password, a.name, a.position, a.permission.toString, a.compID)))
         )
 
 
@@ -86,25 +86,35 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
  	 implicit rs => 
     Ok(html.account.list(
       DbApi.usersList(page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
-      orderBy, filter
-    ))
+      orderBy, filter )
+    )
 	
+  }
+
+
+ def projList(id: Long, page: Int, orderBy: Int, filter: String) = StackAction(AuthorityKey -> LocalAdministrator){ 
+   implicit rs => 
+    Ok(html.project.projectsList(
+      DbApi.projList(id, page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
+      orderBy, filter, id )
+    )
+  
   }
 
   def create = StackAction(AuthorityKey -> Administrator) { implicit rs =>
         { 
-          Ok(html.account.createForm(accForm))
+          Ok(html.account.createForm(accForm, DbApi.optionsComp))
         }
   }
 
 
   def save = StackAction(AuthorityKey -> Administrator) { implicit rs =>
       accForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(html.account.createForm(formWithErrors)),
+      formWithErrors => BadRequest(html.account.createForm(formWithErrors, DbApi.optionsComp)),
       entity => { 
         
           DbApi.insert(entity)
-          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s"User ${entity.name} został dodany")
+          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został dodany")
         
       })
   }
@@ -126,8 +136,9 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
       upForm.bindFromRequest.fold(
         formWithErrors => BadRequest(html.account.editForm(pk, formWithErrors)),
         entity => {
+          println(entity)
           DbApi.update(pk, entity)
-          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s"Użytkownik ${entity.name} został uaktualniony")
+          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został uaktualniony")
         })
     }
   }
