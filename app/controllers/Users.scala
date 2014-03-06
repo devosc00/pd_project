@@ -34,7 +34,7 @@ object ResolveUser extends Controller with AuthenticationElement with AuthConfig
     println(user.compID.get)
     val perm: SimpleResult = user.permission match {
     	case Administrator => Redirect(routes.Users.list(0, 2, ""))
-    	case LocalAdministrator => Redirect(routes.Users.projList(user.compID.get, 0, 2, ""))
+    	case LocalAdministrator => Redirect(routes.Projects.projList(user.compID.get, 0, 2, ""))
     	case Operator => Ok("hello operator " + user.name) 
     	case SalesCraft => Ok ("hello sales man " + user.name)
     	case _ => Redirect(routes.Application.login)
@@ -91,15 +91,6 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
 	
   }
 
-
- def projList(id: Long, page: Int, orderBy: Int, filter: String) = StackAction(AuthorityKey -> LocalAdministrator){ 
-   implicit rs => 
-    Ok(html.project.projectsList(
-      DbApi.projList(id, page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
-      orderBy, filter, id )
-    )
-  
-  }
 
   def create = StackAction(AuthorityKey -> Administrator) { implicit rs =>
         { 

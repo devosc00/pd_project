@@ -4,12 +4,11 @@
 * Helper generating navigation links    *
 ****************************************@
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-    routes.Users.list(newPage, newOrderBy.map { orderBy =>
+    routes.Projects.projList(compID, newPage, newOrderBy.map { orderBy =>
         if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
     }.getOrElse(currentOrderBy), currentFilter)
     
 }
-
 @**********************************
 * Helper generating table headers *
 ***********************************@
@@ -22,7 +21,7 @@
 
 @main {
     
-    <h1>@Messages("users.list.title", currentPage.total)</h1>
+    <h1>@Messages("projects.list.title", currentPage.total)</h1>
 
     @flash.get("success").map { message =>
         <div class="alert-message warning">
@@ -32,7 +31,7 @@
 
     <div id="actions">
         
-        @helper.form(action=routes.Users.projList(compID)) {
+        @helper.form(action=routes.Projects.projList(compID)) {
             <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
@@ -47,9 +46,9 @@
             <thead>
                 <tr>
                     @header(2, "Nazwa")
-                    @header(3, "Adres e-mail")
-                    @header(4, "Stanowisko")
-                    @header(5, "Firma")
+                    @header(3, "Data rozpoczęcia")
+                    @header(4, "Data zakończenia")
+                    @header(5, "Wykonanie")
                 </tr>
             </thead>
             <tbody>

@@ -122,18 +122,18 @@ object DbApi extends DAO {
   }
 
 
-  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[(Project, Account)] = {
+  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filterr: String = "%"): Page[(Project, Account)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
       (for {
         (project, account) <- projects leftJoin accounts.filter(_.compID === id) on (_.accID === _.id)
-        if project.name.toLowerCase like filter.toLowerCase()
+        if project.name.toLowerCase like filterr.toLowerCase()
       } yield (project, account))
         .drop(offset)
         .take(pageSize)
 
-    val totalRows = count(filter)
+    val totalRows = count(filterr)
     val result = query.list.map(row => (row._1, row._2))
 
     Page(result, page, offset, totalRows)
