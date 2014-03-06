@@ -5,6 +5,8 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data._
 import models.Company
+
+import java.util.{ Date }
 /** Uncomment the following lines as needed **/
 /**
 import play.api.Play.current
@@ -27,9 +29,11 @@ object Companies extends Controller {
   		"city" -> nonEmptyText,
   		"street" -> nonEmptyText,
   		"phone" -> nonEmptyText,
-  		"createDate" -> date("yyyy-MM-dd"),
+  		"createDate" -> optional(date("yyyy-MM-dd")),
   		"orders" -> number 
-  		)(Company.apply)(Company.unapply)
+  		)((id, name, city, street, phone, createDate, orders) =>
+      Company(id, name, city, street, phone, createDate.asInstanceOf[Option[java.sql.Date]], orders))
+      ((c: Company) => Some((c.id, c.name, c.street, c.street, c.phone, c.createDate.asInstanceOf[Option[java.util.Date]], c.orders)))
   	)  
 
 }

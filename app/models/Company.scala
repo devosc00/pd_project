@@ -4,8 +4,8 @@ import play.api.db.slick.Config.driver.simple._
 import scala.reflect.runtime.universe._
 import play.api.db.DB
 import play.api.Play.current
-import java.util.Date
-import java.sql.{ Date => SqlDate }
+//import java.util.Date
+import java.sql.Date
 import scala.slick.lifted.Tag
 import java.sql.Timestamp
 
@@ -16,13 +16,13 @@ case class Company(
   city: String,
   street: String,
   phone: String,
-  createDate: Date,
+  createDate: Option[Date],
   orders: Int)
 
 
 class Companies(tag: Tag) extends Table[Company] (tag, "COMPANY") {
   
-  implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
+  //implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
 
   def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
   def name = column[String] ("NAME", O.NotNull)
@@ -32,7 +32,7 @@ class Companies(tag: Tag) extends Table[Company] (tag, "COMPANY") {
   def createDate = column[Date] ("CREATE_DATE")
   def orders = column[Int] ("ORDERS")
 
-  def * = (id.?, name, city, street, phone, createDate, orders) <> (Company.tupled, Company.unapply)
+  def * = (id.?, name, city, street, phone, createDate.?, orders) <> (Company.tupled, Company.unapply)
   }
 
   

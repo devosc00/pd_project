@@ -25,9 +25,11 @@ object Materials extends Controller {
   	mapping (
   		"id" -> optional(longNumber),
   		"name" -> nonEmptyText,
-  		"createDate" -> date("yyyy-MM-dd"),
+  		"createDate" -> optional(date("yyyy-MM-dd")),
   		"tAmount" -> of[Float]
-  		)(Material.apply)(Material.unapply)
+  		)((id, name, createDate, tAmount) =>
+  		Material(id, name, createDate.asInstanceOf[Option[java.sql.Date]], tAmount))
+  		((m: Material) => Some((m.id, m.name, m.createDate.asInstanceOf[Option[java.util.Date]], m.tAmount)))
   	)
 
   
