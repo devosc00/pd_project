@@ -16,7 +16,9 @@ insert into "ACCOUNT"("ID", "EMAIL", "PASS", "NAME", "POSITION", "PERMISSION", "
 insert into "ACCOUNT"("ID", "EMAIL", "PASS", "NAME", "POSITION", "PERMISSION", "COMP_ID") 
 	values (30000, 'przemek@example.com', 'secret', 'Przemek Nowak', 'produkcja', 'LocalAdministrator', 1500 );
 
-insert into "MATERIAL"("ID", "NAME", "DATE", "TOTAL_AMOUNT") values (10000, 'Poliamid', '11-11-2011', 0 );
+insert into "MATERIAL"("ID", "NAME", "DATE", "TOTAL_AMOUNT", "COMP_ID") values (10000, 'Poliamid', '11-11-2011', 0, 1010 );
+insert into "MATERIAL"("ID", "NAME", "DATE", "TOTAL_AMOUNT", "COMP_ID") values (20000, 'Polietylen', '11-11-2011', 0, 1500 );
+
 
 insert into "PROJECT"("ID", "NAME", "START_DATE", "END_DATE", "ORDERED", "MAT_AMOUNT", "DONE_PARTS", "ACC_ID", "MAT_ID") 
 	values (10000, 'koło linowe', '11-11-2011', '11-11-2011', 6, 2.5, 0, 10000, 10000);

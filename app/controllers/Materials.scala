@@ -19,6 +19,7 @@ import play.api.cache._
 import play.api.libs.json._
 **/
 
+
 object Materials extends Controller {
 
   val materialForm = Form (
@@ -26,10 +27,11 @@ object Materials extends Controller {
   		"id" -> optional(longNumber),
   		"name" -> nonEmptyText,
   		"createDate" -> optional(date("yyyy-MM-dd")),
-  		"tAmount" -> of[Float]
-  		)((id, name, createDate, tAmount) =>
-  		Material(id, name, createDate.asInstanceOf[Option[java.sql.Date]], tAmount))
-  		((m: Material) => Some((m.id, m.name, m.createDate.asInstanceOf[Option[java.util.Date]], m.tAmount)))
+  		"tAmount" -> of[Float],
+      "compID" -> longNumber
+  		)((id, name, createDate, tAmount, compID) =>
+  		Material(id, name, DbApi.date2sql(createDate), tAmount, compID))
+  		((m: Material) => Some((m.id, m.name, m.createDate.asInstanceOf[Option[java.util.Date]], m.tAmount, m.compID)))
   	)
 
   

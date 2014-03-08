@@ -110,9 +110,27 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
       })
   }
 
+
+  def createLocalAdmin = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+        { 
+          Ok(html.account.createLocalAdmin(accForm, DbApi.newCompID))
+        }
+  }
+
+
+  def saveLocalAdmin(id: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+      accForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(html.account.createLocalAdmin(formWithErrors, id)),
+      entity => { 
+          DbApi.insert(entity)
+          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został dodany")
+        
+      })
+  }
+
  
   def edit(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
-   	 {
+     {
  	DbApi.findById(pk) match {
         case Some(e) => Ok(html.account.editForm(pk, upForm.fill(e)))
         case None => NotFound

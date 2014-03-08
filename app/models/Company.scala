@@ -17,7 +17,7 @@ case class Company(
   street: String,
   phone: String,
   createDate: Option[Date],
-  orders: Int)
+  orders: Option[Int])
 
 
 class Companies(tag: Tag) extends Table[Company] (tag, "COMPANY") {
@@ -32,7 +32,7 @@ class Companies(tag: Tag) extends Table[Company] (tag, "COMPANY") {
   def createDate = column[Date] ("CREATE_DATE")
   def orders = column[Int] ("ORDERS")
 
-  def * = (id.?, name, city, street, phone, createDate.?, orders) <> (Company.tupled, Company.unapply)
+  def * = (id.?, name, city, street, phone, createDate.?, orders.?) <> (Company.tupled, Company.unapply)
   }
 
   

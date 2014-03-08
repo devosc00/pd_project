@@ -36,7 +36,7 @@
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
         
-        <a class="btn success" id="add" href="@routes.Users.create()">Dodaj użytkownika</a>
+        <a class="btn success" id="add" href="@routes.Projects.create(compID)">Dodaj projekt</a>
         
     </div>
     
@@ -56,7 +56,7 @@
                 @projects.map { 
                     case (project, account) => {
                         <tr>
-                            <td><a href="@routes.Users.edit(account.id.get)">@project.name</a></td>
+                            <td><a href="@routes.Projects.start(project.id.get)">@project.name</a></td>
                             <td>
                                 @project.startDate
                             </td>

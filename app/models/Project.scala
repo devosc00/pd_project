@@ -17,7 +17,7 @@ case class Project (
 	endDate: Option[Date],
 	ordered: Int,
 	matAmount: Float,
-	doneParts: Int,
+	doneParts: Option[Int] = None,
 	accID: Long,
 	matID: Long )
 
@@ -31,11 +31,11 @@ class Projects (tag: Tag) extends Table[Project] (tag, "PROJECT") {
 	def endDate = column [Date]("END_DATE")
 	def ordered = column [Int] ("ORDERED")
 	def matAmount = column [Float] ("MAT_AMOUNT")
-	def doneParts = column [Int] ("DONE_PARTS")
+	def doneParts = column [Int] ("DONE_PARTS", O.Nullable)
 	def accID = column [Long] ("ACC_ID")
 	def matID = column [Long] ("MAT_ID")
 
-	def * = (id.?, name, startDate.?, endDate.?, ordered, matAmount, doneParts, 
+	def * = (id.?, name, startDate.?, endDate.?, ordered, matAmount, doneParts.?, 
 		accID, matID) <> (Project.tupled, Project.unapply)
 
 	def accountFK = foreignKey("ACC_FK", accID, DbApi.accounts)(_.id)
