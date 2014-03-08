@@ -156,6 +156,26 @@ object DbApi extends DAO {
   }
 
 
+  def operatorProjList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filterr: String = "%"): Page[(Project, Account)] = {
+    DB.withSession { implicit session =>
+    val offset = pageSize * page
+    val query =
+      (for {
+        (project, account) <- projects leftJoin accounts.filter(_.compID === id) on (_.accID === _.id)
+        if project.ordered > project.doneParts
+        if project.name.toLowerCase like filterr.toLowerCase()
+      } yield (project, account))
+        .drop(offset)
+        .take(pageSize)
+
+    val totalRows = count(filterr)
+    val result = query.list.map(row => (row._1, row._2))
+
+    Page(result, page, offset, totalRows)
+    }
+  }
+
+
  def update(id: Long, acc: Account) {
     DB.withSession { implicit session =>
     val x = findById(id)
@@ -196,19 +216,25 @@ object DbApi extends DAO {
     }
   }
 
-/*  def findEmptyComp: Long = {
-    DB.withSession { implicit session =>
-      val query = (for { c <- companies
-                         a <- accounts if !(c.id === a.compID) }
-                         yield c) 
-      println(query.selectStatement + " data " + query.first + " list " + query.list)
-      val id = (for  { q <- query
-                       c <- companies if q.id != c.id }
-                       yield c.id) 
-      println(id.selectStatement + " data " + id.first + " list " + id.list)
-      id.first
+
+  def updateDoneParts(id: Option[Long], done: Option[Int]): Option[Project] = {
+    DB.withSession { implicit session => 
+      val x = (for  { p <- projects if p.id === id.get } yield p.doneParts )
+      val y = x.first + done.get
+      x.update(y) 
+      findProjById(id.get)
     }
-  }*/
+  } 
+
+
+  def updateUsedMaterial(id: Long, done: Float) {
+    DB.withSession { implicit session => 
+      val x = (for  { p <- projects if p.id === id } yield p.matAmount )
+      val y = (x.first + done)
+      x.update(y) 
+    }
+  }
+
 
   def delete(id: Long) = {
     DB.withSession { implicit session =>

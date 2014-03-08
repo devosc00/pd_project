@@ -35,8 +35,8 @@ object ResolveUser extends Controller with AuthenticationElement with AuthConfig
     val perm: SimpleResult = user.permission match {
     	case Administrator => Redirect(routes.Users.list(0, 2, ""))
     	case LocalAdministrator => Redirect(routes.Projects.projList(user.compID.get, 0, 2, ""))
-    	case Operator => Ok("hello operator " + user.name) 
-    	case SalesCraft => Ok ("hello sales man " + user.name)
+    	case Operator => Redirect(routes.Projects.projList(user.compID.get, 0, 2, "")) 
+    	case SalesCraft => Redirect(routes.Projects.projList(user.compID.get, 0, 2, ""))
     	case _ => Redirect(routes.Application.login)
     }
     perm

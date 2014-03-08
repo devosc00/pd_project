@@ -14,26 +14,26 @@ GET     /logout                      controllers.Application.logout
 
 GET     /users                    	 controllers.Users.list(p:Int ?= 0, s:Int ?= 2, f ?= "%")
 
-GET     /projects/:id               controllers.Projects.projList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
+GET     /projects/:id                controllers.Projects.projList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
 
 # Create new
 GET     /company/new           		 controllers.Companies.create
 POST    /company/new           		 controllers.Companies.save
 GET     /users/new           		 controllers.Users.create
 POST    /users/new               	 controllers.Users.save
-GET     /users/newLocal           		controllers.Users.createLocalAdmin
-POST    /users/newLocal/:id             controllers.Users.saveLocalAdmin(id: Long)
-GET		/projects/new/:id			controllers.Projects.create(id: Long)
-POST	/projects/new/:id			controllers.Projects.saveNew(id: Long)
+GET     /users/newLocal           	 controllers.Users.createLocalAdmin
+POST    /users/newLocal/:id          controllers.Users.saveLocalAdmin(id: Long)
+GET		/projects/new/:id			 controllers.Projects.create(id: Long)
+POST	/projects/new/:id			 controllers.Projects.saveNew(id: Long)
 
 # Edit existing 
 GET     /users/:id                	 controllers.Users.edit(id:Long)
 POST    /users/:id                	 controllers.Users.update(id:Long)
-GET		/projects/newStart/:id			controllers.Projects.start(id: Long)
-POST	/projects/newStart/:id			controllers.Projects.saveStart(id: Long)
+GET		/projects/newStart/:id		 controllers.Projects.start(id: Long)
+POST	/projects/newStart/:id		 controllers.Projects.saveStart(id: Long)
 
 # Delete
 POST    /users/:id/delete         	 controllers.Users.delete(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file                controllers.Assets.at(path="/public", file)
