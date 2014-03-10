@@ -13,7 +13,7 @@ case class Material (
 	id: Option[Long],
 	name: String,
 	createDate: Option[Date],
-	tAmount: Float,
+	tAmount: Option[Float],
 	compID: Long )
 
 class Materials (tag: Tag) extends Table [Material] (tag, "MATERIAL") {
@@ -26,7 +26,7 @@ class Materials (tag: Tag) extends Table [Material] (tag, "MATERIAL") {
 	def tAmount = column [Float] ("TOTAL_AMOUNT")
 	def compID = column [Long] ("COMP_ID")
 
-	def * = (id.?, name, createDate.?, tAmount, compID) <> (Material.tupled, Material.unapply)
+	def * = (id.?, name, createDate.?, tAmount.?, compID) <> (Material.tupled, Material.unapply)
 
 	def companyFK = foreignKey("COMP_FK", compID, DbApi.companies)(_.id)
 }

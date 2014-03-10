@@ -10,6 +10,7 @@ case object LocalAdministrator extends Permission
 case object SalesCraft extends Permission
 
 object Permission {
+
  implicit val PermissionTimeMapper = MappedColumnType.base[Permission, String](
     d => Permission.stringValueOf(d),
     t => Permission.valueOf(t)
@@ -21,7 +22,7 @@ object Permission {
     case "LocalAdministrator" => LocalAdministrator
     case "Operator" => Operator
     case "SalesCraft" => SalesCraft
-    case _ => throw new IllegalArgumentException()
+    case _ =>  println(value) ;throw new IllegalArgumentException()
   }
 
   def stringValueOf(value: Permission): String = value match {

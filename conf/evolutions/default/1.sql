@@ -42,7 +42,7 @@ create table "PROJECT" (
 	"MAT_AMOUNT" FLOAT,
 	"DONE_PARTS" INTEGER,
 	"ACC_ID" BIGINT NOT NULL,
-	"MAT_ID" BIGINT NOT NULL);
+	"MAT_ID" BIGINT);
 
 create table "PROJ_DETAIL" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
@@ -55,13 +55,20 @@ create table "PROJ_DETAIL" (
 	"TOTAL_MAT" FLOAT,
 	"PROJ_ID" BIGINT NOT NULL);
 
-alter table "ACCOUNT" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID") on update NO ACTION on delete NO ACTION;
-alter table "ACC_DETAIL" add constraint "ACCOUNT_FK" foreign key("ACC_ID") references "ACCOUNT"("ID") on update NO ACTION on delete NO ACTION;
-alter table "ACC_DETAIL" add constraint "PROJ_DETAIL_FK" foreign key("PROJ_DETAIL_ID") references "PROJ_DETAIL"("ID") on update NO ACTION on delete NO ACTION;
-alter table "MATERIAL" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJECT" add constraint "ACC_FK" foreign key("ACC_ID") references "ACCOUNT"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJECT" add constraint "MAT_FK" foreign key("MAT_ID") references "MATERIAL"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJ_DETAIL" add constraint "PROJ_FK" foreign key("PROJ_ID") references "PROJECT"("ID") on update NO ACTION on delete NO ACTION;
+alter table "ACCOUNT" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "ACC_DETAIL" add constraint "ACCOUNT_FK" foreign key("ACC_ID") references "ACCOUNT"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "ACC_DETAIL" add constraint "PROJ_DETAIL_FK" foreign key("PROJ_DETAIL_ID") references "PROJ_DETAIL"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "MATERIAL" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJECT" add constraint "ACC_FK" foreign key("ACC_ID") references "ACCOUNT"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJECT" add constraint "MAT_FK" foreign key("MAT_ID") references "MATERIAL"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJ_DETAIL" add constraint "PROJ_FK" foreign key("PROJ_ID") references "PROJECT"("ID")
+  on update CASCADE on delete CASCADE;
 
 # --- !Downs
 

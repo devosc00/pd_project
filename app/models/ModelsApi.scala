@@ -118,15 +118,23 @@ object DbApi extends DAO {
     Query(accounts.where(_.name.toLowerCase like filter.toLowerCase).length).first
 
 
-  def countProj(compID: Long)(implicit s: Session): Int =
-    Query(accounts.where(_.compID === compID).length).first
+/*  def countProj(compID: Long)(implicit s: Session): Int =
+    Query(accounts.where(_.compID === compID).length).first*/
 
  
-  def countProj(compID: Long, filter: String)(implicit s: Session): Int =
-    Query(accounts.where(_.name.toLowerCase like filter.toLowerCase).filter(_.compID === compID).length).first
+  def countProj(compID: Long, filter: String): Int =
+    DB.withSession { implicit session => 
+      val query =
+      (for {
+        a <- accounts if a.compID === compID
+        p <- projects if p.accID === a.id
+        if p.name.toLowerCase like filter.toLowerCase()
+      } yield (p))
+      query.list.length
+    }
 
 
-  def usersList(page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filter: String = "%"): Page[(Account, Company)] = {
+  def usersList(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[(Account, Company)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
@@ -145,7 +153,7 @@ object DbApi extends DAO {
   }
 
 
-  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filterr: String = "%"): Page[(Project, Account)] = {
+  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filterr: String = "%"): Page[(Project, Account)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
@@ -162,14 +170,14 @@ object DbApi extends DAO {
     val result = query.list.map(row  => (row._1, row._2))
      Page(result, page, offset, totalRows)
       } catch {   
-          case se: SlickException => println(se + query.selectStatement)
+          case se: SlickException => println(se)
           Page(Seq.empty[(Project, Account)], page, offset, totalRows) 
       } 
     }
   }
 
 
-  def operatorProjList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filterr: String = "%"): Page[(Project, Account)] = {
+  def operatorProjList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filterr: String = "%"): Page[(Project, Account)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
@@ -223,6 +231,16 @@ object DbApi extends DAO {
     }
   }
 
+
+  def insertMat(compID: Long, mat: Material) {
+    DB.withSession { implicit session =>
+      println(mat)
+      val matToinsert = Material(mat.id, mat.name, mat.createDate, mat.tAmount, compID)
+      materials.insert(matToinsert)
+    }
+  }
+
+
   var newCompID: Long = 0
 
   def insertComp(comp: Company) {
@@ -260,5 +278,18 @@ object DbApi extends DAO {
     }
   }
   
+
+  def deleteComp(id: Long) = {
+    DB.withSession { implicit session =>
+    companies.where(_.id === id).delete
+    }
+  }
+
+    def deleteProj(id: Long) = {
+    DB.withSession { implicit session =>
+    projects.where(_.id === id).delete
+    }
+  }
+
 
 }

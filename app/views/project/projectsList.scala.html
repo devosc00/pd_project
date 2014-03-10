@@ -35,7 +35,8 @@
             <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
-        
+
+        <a class="btn success" id="add" href="@routes.Materials.create(compID)">Dodaj materiał</a>
         <a class="btn success" id="add" href="@routes.Projects.create(compID)">Dodaj projekt</a>
         
     </div>
@@ -70,7 +71,7 @@
                                 @project.endDate
                             </td>
                             <td>
-                                @account.name
+                                <a href="@routes.Users.edit(account.id.get)">@account.name</a>
                             </td>
                         </tr>
                     }

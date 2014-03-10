@@ -18,8 +18,8 @@ case class Project (
 	ordered: Option[Int],
 	matAmount: Option[Float],
 	doneParts: Option[Int],
-	accID: Long,
-	matID: Long )
+	accID: Option[Long],
+	matID: Option[Long] )
 
 class Projects (tag: Tag) extends Table[Project] (tag, "PROJECT") {
 	
@@ -36,7 +36,7 @@ class Projects (tag: Tag) extends Table[Project] (tag, "PROJECT") {
 	def matID = column [Long] ("MAT_ID")
 
 	def * = (id.?, name.?, startDate.?, endDate.?, ordered.?, matAmount.?, doneParts.?, 
-		accID, matID) <> (Project.tupled, Project.unapply)
+		accID.?, matID.?) <> (Project.tupled, Project.unapply)
 
 	def accountFK = foreignKey("ACC_FK", accID, DbApi.accounts)(_.id)
 	def materialFK = foreignKey("MAT_FK", matID, DbApi.materials)(_.id)

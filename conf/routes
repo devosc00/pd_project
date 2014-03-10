@@ -26,6 +26,8 @@ GET     /users/newLocal           	 controllers.Users.createLocalAdmin
 POST    /users/newLocal/:id          controllers.Users.saveLocalAdmin(id: Long)
 GET		/projects/new/:id			 controllers.Projects.create(id: Long)
 POST	/projects/new/:id			 controllers.Projects.saveNew(id: Long)
+GET		/materials/new/:id			 controllers.Materials.create(id: Long)
+POST	/materials/new/:id			 controllers.Materials.save(id: Long)
 
 # Edit existing 
 GET     /users/:id                	 controllers.Users.edit(id:Long)
@@ -37,6 +39,7 @@ POST 	/projects/parts/:id 	 	 controllers.Projects.saveDoneParts(id: Long)
 
 # Delete
 POST    /users/:id/delete         	 controllers.Users.delete(id:Long)
+POST    /project/:id/delete          controllers.Projects.delete(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                controllers.Assets.at(path="/public", file)

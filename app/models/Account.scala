@@ -5,6 +5,7 @@ import play.api.db.DB
 import play.api.Play.current
 import scala.reflect.runtime.universe._
 import scala.slick.lifted.Tag
+import scala.slick.model.ForeignKeyAction
 
 
 case class Account (
@@ -18,6 +19,9 @@ case class Account (
 
 
 class Accounts(tag: Tag) extends Table[Account](tag, "ACCOUNT") {
+
+  //val mySequence = Sequence[Int]("ACCOUNT_SEQ") start 100 inc 1  //not work
+
   def id = column[Long] ("ID", O.PrimaryKey, O.AutoInc)
   def email = column[String] ("EMAIL", O.NotNull)
   def password = column[String] ("PASS", O.NotNull)
@@ -28,7 +32,8 @@ class Accounts(tag: Tag) extends Table[Account](tag, "ACCOUNT") {
 
   def * = (id.?, email, password.?, name, position, permission, compID.?) <> (Account.tupled, Account.unapply)
 
-  def companyFK = foreignKey("COMP_FK", compID, DbApi.companies)(_.id)
+  def companyFK = foreignKey("COMP_FK", compID, DbApi.companies)(_.id, onDelete = ForeignKeyAction.Cascade,
+    onUpdate = ForeignKeyAction.Cascade)
   }
 
 

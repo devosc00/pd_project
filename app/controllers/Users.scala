@@ -5,9 +5,6 @@ import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data._
 import play.api.Play.current
-import play.api.db.slick.Config.driver.simple._
-
-
 /** Uncomment the following lines as needed **/
 /**
 import play.api.Play.current
@@ -20,7 +17,6 @@ import akka.util.duration._
 import play.api.cache._
 import play.api.libs.json._
 **/
-import play.api.db.slick._
 import jp.t2v.lab.play2.auth._
 import models._
 import views._  
@@ -129,7 +125,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
   }
 
  
-  def edit(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+  def edit(pk: Long) = StackAction(AuthorityKey -> LocalAdministrator) { implicit rs =>
      {
  	DbApi.findById(pk) match {
         case Some(e) => Ok(html.account.editForm(pk, upForm.fill(e)))
@@ -139,7 +135,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
   }
 
 
-  def update(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+  def update(pk: Long) = StackAction(AuthorityKey -> LocalAdministrator) { implicit rs =>
     	 {
       println("update form filled")
       upForm.bindFromRequest.fold(
@@ -147,7 +143,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
         entity => {
           println(entity)
           DbApi.update(pk, entity)
-          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został uaktualniony")
+          Redirect(routes.ResolveUser.index).flashing("success" -> s" ${entity.name} został uaktualniony")
         })
     }
   }

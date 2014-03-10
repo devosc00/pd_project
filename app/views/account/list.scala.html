@@ -36,7 +36,8 @@
             <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
             <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
         }
-        
+
+        <a class="btn success" id="add" href="@routes.Companies.create()">Dodaj Firmę</a>
         <a class="btn success" id="add" href="@routes.Users.create()">Dodaj użytkownika</a>
         
     </div>
@@ -53,7 +54,6 @@
                 </tr>
             </thead>
             <tbody>
-
                 @users.map { 
                     case (account, company) => {
                         <tr>

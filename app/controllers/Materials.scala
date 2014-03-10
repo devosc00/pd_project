@@ -4,7 +4,6 @@ import play.api._
 import play.api.mvc._
 import play.api.data.Forms._
 import play.api.data._
-import models._
 import play.api.data.format.Formats._
 /** Uncomment the following lines as needed **/
 /**
@@ -18,16 +17,19 @@ import akka.util.duration._
 import play.api.cache._
 import play.api.libs.json._
 **/
+import jp.t2v.lab.play2.auth._
+import models._
+import views._ 
 
 
-object Materials extends Controller {
+object Materials extends Controller with AuthElement with AuthConfigImpl {
 
   val materialForm = Form (
   	mapping (
   		"id" -> optional(longNumber),
   		"name" -> nonEmptyText,
   		"createDate" -> optional(date("yyyy-MM-dd")),
-  		"tAmount" -> of[Float],
+  		"tAmount" -> optional(of[Float]),
       "compID" -> longNumber
   		)((id, name, createDate, tAmount, compID) =>
   		Material(id, name, DbApi.date2sql(createDate), tAmount, compID))
@@ -35,5 +37,21 @@ object Materials extends Controller {
   	)
 
   
+  def create(compId: Long) = StackAction(AuthorityKey -> LocalAdministrator){ 
+    implicit rs => 
+     Ok(html.material.create(compId: Long, materialForm))
+  }
+
+
+  def save(compId: Long) = StackAction(AuthorityKey -> LocalAdministrator){ 
+    implicit rs => 
+    materialForm.bindFromRequest.fold(
+    formWithErrors => BadRequest(html.material.create(compId, formWithErrors)),
+      mat => { DbApi.insertMat(compId, mat)
+      Redirect(routes.ResolveUser.index).flashing("success" -> s" ${mat.name} został dodany")
+        }
+      )
+  }
+
 
 }
