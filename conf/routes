@@ -9,12 +9,13 @@ GET     /                           controllers.ResolveUser.index
 GET     /login                       controllers.Application.login
 POST    /login                       controllers.Application.authenticate
 GET     /logout                      controllers.Application.logout
-# GET		/resolve 					controllers.ResolveUser.index
 
 
 GET     /users                    	 controllers.Users.list(p:Int ?= 0, s:Int ?= 2, f ?= "%")
 
 GET     /projects/:id                controllers.Projects.projList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
+GET     /operatorProjects/:id        controllers.Projects.operatorProjList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
+GET     /salesProjects/:id           controllers.Projects.salesProjList(id:Long , p:Int ?= 0, s:Int ?= 2, f ?= "%")
 
 # Create new
 GET     /company/new           		 controllers.Companies.create
@@ -31,6 +32,8 @@ GET     /users/:id                	 controllers.Users.edit(id:Long)
 POST    /users/:id                	 controllers.Users.update(id:Long)
 GET		/projects/newStart/:id		 controllers.Projects.start(id: Long)
 POST	/projects/newStart/:id		 controllers.Projects.saveStart(id: Long)
+GET 	/projects/parts/:id 		 controllers.Projects.editDoneParts(id: Long)
+POST 	/projects/parts/:id 	 	 controllers.Projects.saveDoneParts(id: Long)
 
 # Delete
 POST    /users/:id/delete         	 controllers.Users.delete(id:Long)

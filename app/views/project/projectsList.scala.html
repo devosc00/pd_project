@@ -56,10 +56,10 @@
                 @projects.map { 
                     case (project, account) => {
                         <tr>
-                            <td><a href="@routes.Projects.start(project.id.get)">@project.name</a>
-                                 @if(project.doneParts.get == 0){
+                            <td><a href="@routes.Projects.start(project.id.get)">@project.name.get</a>
+                                 @if(project.doneParts == None){
                                 <em>Oczekuje</em>
-                                 } @if(project.doneParts != 0 && project.doneParts.get < project.ordered){
+                                 } @if(project.doneParts != None && project.doneParts.get < project.ordered.get){
                                 <em>W produkcji</em>
                                  }
                             </td>

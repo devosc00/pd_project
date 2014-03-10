@@ -35,8 +35,8 @@ object ResolveUser extends Controller with AuthenticationElement with AuthConfig
     val perm: SimpleResult = user.permission match {
     	case Administrator => Redirect(routes.Users.list(0, 2, ""))
     	case LocalAdministrator => Redirect(routes.Projects.projList(user.compID.get, 0, 2, ""))
-    	case Operator => Redirect(routes.Projects.projList(user.compID.get, 0, 2, "")) 
-    	case SalesCraft => Redirect(routes.Projects.projList(user.compID.get, 0, 2, ""))
+    	case Operator => Redirect(routes.Projects.operatorProjList(user.compID.get, 0, 2, "")) 
+    	case SalesCraft => Redirect(routes.Projects.salesProjList(user.compID.get, 0, 2, ""))
     	case _ => Redirect(routes.Application.login)
     }
     perm
@@ -59,7 +59,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
       ).verifying(
         "Hasła są różne", passwords => passwords._1 == passwords._2 ),
       "name" -> nonEmptyText,
-      "position" -> nonEmptyText,
+      "position" -> text,
       "permission" -> text,
       "compID" -> optional(longNumber)
       )((id, email, password, name, position, permission, compID) => 

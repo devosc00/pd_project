@@ -12,12 +12,12 @@ import java.sql.Timestamp
 
 case class Project (
 	id: Option[Long],
-	name: String,
+	name: Option[String],
 	startDate: Option[Date],
 	endDate: Option[Date],
-	ordered: Int,
-	matAmount: Float,
-	doneParts: Option[Int] = None,
+	ordered: Option[Int],
+	matAmount: Option[Float],
+	doneParts: Option[Int],
 	accID: Long,
 	matID: Long )
 
@@ -26,16 +26,16 @@ class Projects (tag: Tag) extends Table[Project] (tag, "PROJECT") {
 	//implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
 
 	def id = column[Long] ("ID", O.PrimaryKey, O.AutoInc)
-	def name = column[String] ("NAME")
-	def startDate = column [Date] ("START_DATE")
-	def endDate = column [Date]("END_DATE")
-	def ordered = column [Int] ("ORDERED")
-	def matAmount = column [Float] ("MAT_AMOUNT")
+	def name = column[String] ("NAME", O.Nullable)
+	def startDate = column [Date] ("START_DATE", O.Nullable)
+	def endDate = column [Date]("END_DATE", O.Nullable)
+	def ordered = column [Int] ("ORDERED", O.Nullable)
+	def matAmount = column [Float] ("MAT_AMOUNT", O.Nullable)
 	def doneParts = column [Int] ("DONE_PARTS", O.Nullable)
 	def accID = column [Long] ("ACC_ID")
 	def matID = column [Long] ("MAT_ID")
 
-	def * = (id.?, name, startDate.?, endDate.?, ordered, matAmount, doneParts.?, 
+	def * = (id.?, name.?, startDate.?, endDate.?, ordered.?, matAmount.?, doneParts.?, 
 		accID, matID) <> (Project.tupled, Project.unapply)
 
 	def accountFK = foreignKey("ACC_FK", accID, DbApi.accounts)(_.id)

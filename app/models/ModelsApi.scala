@@ -118,7 +118,15 @@ object DbApi extends DAO {
     Query(accounts.where(_.name.toLowerCase like filter.toLowerCase).length).first
 
 
-  def usersList(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Page[(Account, Company)] = {
+  def countProj(compID: Long)(implicit s: Session): Int =
+    Query(accounts.where(_.compID === compID).length).first
+
+ 
+  def countProj(compID: Long, filter: String)(implicit s: Session): Int =
+    Query(accounts.where(_.name.toLowerCase like filter.toLowerCase).filter(_.compID === compID).length).first
+
+
+  def usersList(page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filter: String = "%"): Page[(Account, Company)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
@@ -137,21 +145,26 @@ object DbApi extends DAO {
   }
 
 
-  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filterr: String = "%"): Page[(Project, Account)] = {
+  def projList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 0, filterr: String = "%"): Page[(Project, Account)] = {
     DB.withSession { implicit session =>
     val offset = pageSize * page
     val query =
       (for {
-        (project, account) <- projects leftJoin accounts.filter(_.compID === id) on (_.accID === _.id)
-        if project.name.toLowerCase like filterr.toLowerCase()
-      } yield (project, account))
+        a <- accounts if a.compID === id
+        p <- projects if p.accID === a.id
+        if p.name.toLowerCase like filterr.toLowerCase()
+      } yield (p, a))
         .drop(offset)
         .take(pageSize)
 
-    val totalRows = count(filterr)
-    val result = query.list.map(row => (row._1, row._2))
-
-    Page(result, page, offset, totalRows)
+    val totalRows = countProj(id,filterr)
+      try {
+    val result = query.list.map(row  => (row._1, row._2))
+     Page(result, page, offset, totalRows)
+      } catch {   
+          case se: SlickException => println(se + query.selectStatement)
+          Page(Seq.empty[(Project, Account)], page, offset, totalRows) 
+      } 
     }
   }
 
@@ -161,17 +174,22 @@ object DbApi extends DAO {
     val offset = pageSize * page
     val query =
       (for {
-        (project, account) <- projects leftJoin accounts.filter(_.compID === id) on (_.accID === _.id)
-        if project.ordered > project.doneParts
-        if project.name.toLowerCase like filterr.toLowerCase()
-      } yield (project, account))
+        a <- accounts if a.compID === id
+        p <- projects if p.accID === a.id
+        if p.ordered > p.doneParts
+        if p.name.toLowerCase like filterr.toLowerCase()
+      } yield (p, a))
         .drop(offset)
         .take(pageSize)
 
-    val totalRows = count(filterr)
-    val result = query.list.map(row => (row._1, row._2))
-
-    Page(result, page, offset, totalRows)
+    val totalRows = countProj(id,filterr)
+      try {
+    val result = query.list.map(row  => (row._1, row._2))
+      Page(result, page, offset, totalRows)
+      } catch {   
+          case se: SlickException => println(se)
+          Page(Seq.empty[(Project, Account)], page, offset, totalRows) 
+      }
     }
   }
 
@@ -183,7 +201,7 @@ object DbApi extends DAO {
       acc.position, acc.permission, x.get.compID)
     println("copy " + accToUpdate)
     accounts.where(_.id === id).update(accToUpdate)
-    }
+ }
   }
 
 
@@ -217,12 +235,12 @@ object DbApi extends DAO {
   }
 
 
-  def updateDoneParts(id: Option[Long], done: Option[Int]): Option[Project] = {
+  def updateDoneParts(id: Option[Long], name: Option[String], done: Option[Int]): Project = {
     DB.withSession { implicit session => 
       val x = (for  { p <- projects if p.id === id.get } yield p.doneParts )
       val y = x.first + done.get
       x.update(y) 
-      findProjById(id.get)
+      findProjById(id.get).get
     }
   } 
 
