@@ -13,13 +13,19 @@ section#main {
     position: relative;
     padding: 5em 2em;
     border-bottom: 1px solid #ccc;
-    min-height: 600px;
+    min-height: 800px;
 } 
 
 section#main .topRight {
     position: absolute;
     right: 20px;
     top: 70px;
+}
+
+section#main .bottom {
+    position: absolute;
+    right: 0;
+    bottom: 300px;
 }
 
 table.users em {
@@ -37,6 +43,17 @@ table.users .col5 {
 }
 
 table.users .header a {
+}
+
+style.black-mail {
+    margin:30px;
+}
+
+#conteiner {
+    position: absolute;
+    top: 90px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #actions {

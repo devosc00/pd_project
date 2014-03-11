@@ -19,7 +19,7 @@ insert into "ACCOUNT"("ID", "EMAIL", "PASS", "NAME", "POSITION", "PERMISSION", "
 	values (30000, 'przemek@example.com', 'secret', 'Przemek Nowak', 'produkcja', 'Operator', 15000 );
 
 insert into	"ACCOUNT"("ID", "EMAIL" ,"PASS", "NAME", "POSITION", "PERMISSION", "COMP_ID") 
-	values (40000, 'krzysiek@example.com', 'secret', 'Krzyś', 'sprzedaż', 'SalesForce',15000 );
+	values (40000, 'krzysiek@example.com', 'secret', 'Krzyś', 'sprzedaż', 'SalesCraft',15000 );
 insert into "ACCOUNT"("ID", "EMAIL", "PASS", "NAME", "POSITION", "PERMISSION", "COMP_ID") 
 	values (50000, 'bob@example.com', 'secret', 'Robert Król', 'sprzedaż', 'LocalAdministrator',20200 );
 

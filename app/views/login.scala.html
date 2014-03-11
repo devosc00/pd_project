@@ -1,24 +1,48 @@
 @(form: Form[Option[Account]])(implicit flash: Flash)
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html>
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-    <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
-</head>
-<body>
+    <head>
+        <title>Play2.2.1 , Postgresql 9.1, Scala 2.10</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")"> 
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")"> 
+    </head>
+
+
+<style>
+  .black-mail{margin:30px;}
+  .container{position:relative;
+               padding:70px; 
+               top:80px;
+             }
+</style>
+
+    <body>
+
+        <header class="topbar">
+            <h1 class="fill">
+                
+                    Rafał Masal &mdash; Praca Dyplomowa
+                
+            </h1>
+
+        </header>
+
+<div class="container">
+    <div class="row-fluid">
+    <div class="span6 offset4 well">
+
+<h1>Login</h1>
 
   @helper.form(routes.Application.authenticate) {
 
-    <h1>Login</h1>
+    
 
     @form.globalError.map { error =>
       <p class="error">
         @error.message
       </p>
-    }
+      }
 
     @flash.get("success").map { message =>
       <p class="success">
@@ -26,25 +50,43 @@
       </p>
     }
 
+
     <p>
-      <input type="email" name="email" placeholder="Email" id="email" value="@form("email").value">
-    </p>
-    <p>
-      <input type="password" name="password" id="password" placeholder="Hasło">
+      <input type="email" name="email" placeholder="Email" id="email" class="span5" value="@form("email").value">
     </p>
     <p>
-      <button type="submit" id="loginbutton">Login</button>
+      <input type="password" name="password" id="password" class="span5" placeholder="Hasło">
     </p>
-
-    <p class="note">
-            Spróbuj <em>robert@@example.com</em> z hasłem <em>secret</em> jako admin.
+    <p>
+      <button type="submit" name="submit" class="btn primary">Login</button>
     </p>
-
-    <p class="note">
-            Spróbuj <em>marcin@@example.com</em> z hasłem <em>secret</em> jako zwykły użytkownik.
-    </p>
-
   }
 
-</body>
+    
+
+
+<p>&mdash; <code>robert@@example.com</code> jako admin / kierownik.</p>
+<p>&mdash; <code>marcin@@example.com</code> jako operator / pracownik produkcji.</p> 
+<p>&mdash; <code>krzysiek@@example.com</code> jako handlowiec / pracownik działu sprzedaży.</p>
+
+<p> &mdash; hasło: <code><em>secret</em></code></p>
+
+    </div>
+  </div>
+</div>
+
+<div class="container">
+<address>
+  <strong>Rafał Masal</strong><br>
+   Politechnika Poznańska<br>
+   Wydział Elektryczny<br>
+</address>
+
+<address>
+  <strong>Kontakt</strong><br>
+  <a href="mailto:#">rafal.masal@@gmail.com</a>
+</address>
+</div>
+
+  </body>
 </html>
