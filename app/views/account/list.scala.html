@@ -33,12 +33,12 @@
     <div id="actions">
         
         @helper.form(action=routes.Users.list()) {
-            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
-            <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Szukaj po nazwie...">
+            <input type="submit" id="searchsubmit" value="Szukaj" class="btn primary">
         }
 
         <a class="btn success" id="add" href="@routes.Companies.create()">Dodaj Firmę</a>
-        <a class="btn success" id="add" href="@routes.Users.create()">Dodaj użytkownika</a>
+        <a class="btn success" id="add1" href="@routes.Users.create()">Dodaj użytkownika</a>
         
     </div>
     
@@ -51,6 +51,8 @@
                     @header(3, "Adres e-mail")
                     @header(4, "Stanowisko")
                     @header(5, "Firma")
+                    @header(6, "Miejscowość")
+                    @header(7, "Telefon")
                 </tr>
             </thead>
             <tbody>
@@ -66,6 +68,12 @@
                             </td>
                             <td>
                                 @company.name
+                            </td>
+                             <td>
+                                @company.city
+                            </td>
+                             <td>
+                                @company.phone
                             </td>
                         </tr>
                     }

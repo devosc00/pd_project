@@ -67,6 +67,16 @@ object DbApi extends DAO {
   }
 
 
+  def optionsAccOperator(id: Long): Seq[(String, String)] = {
+    DB.withSession { implicit session =>
+    val query = (for {
+      acc <- accounts.filter(_.compID === id) where (_.permission === Permission.valueOf("Operator"))
+      } yield (acc.id, acc.name)).sortBy(_._2)
+      query.list.map(row => (row._1.toString, row._2))
+    }
+  }
+
+
   def authenticate(email: String, password: Option[String]): Option[Account] = { 
     DB.withSession { implicit session =>
     findByEmail(email).filter { account => password.equals(account.password) }
@@ -184,6 +194,30 @@ object DbApi extends DAO {
       (for {
         a <- accounts if a.compID === id
         p <- projects if p.accID === a.id
+        if p.name.toLowerCase like filterr.toLowerCase()
+      } yield (p, a))
+        .drop(offset)
+        .take(pageSize)
+
+    val totalRows = countProj(id,filterr)
+      try {
+    val result = query.list.map(row  => (row._1, row._2))
+      Page(result, page, offset, totalRows)
+      } catch {   
+          case se: SlickException => println(se)
+          Page(Seq.empty[(Project, Account)], page, offset, totalRows) 
+      }
+    }
+  }
+
+
+  def salesProjList(id: Long, page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filterr: String = "%"): Page[(Project, Account)] = {
+    DB.withSession { implicit session =>
+    val offset = pageSize * page
+    val query =
+      (for {
+        a <- accounts if a.compID === id
+        p <- projects if p.accID === a.id
         if p.ordered > p.doneParts
         if p.name.toLowerCase like filterr.toLowerCase()
       } yield (p, a))
@@ -233,6 +267,7 @@ object DbApi extends DAO {
 
 
   def insertMat(compID: Long, mat: Material) {
+    println(mat + " insert material ")
     DB.withSession { implicit session =>
       println(mat)
       val matToinsert = Material(mat.id, mat.name, mat.createDate, mat.tAmount, compID)
@@ -253,12 +288,13 @@ object DbApi extends DAO {
   }
 
 
-  def updateDoneParts(id: Option[Long], name: Option[String], done: Option[Int]): Project = {
+  def updateDoneParts(id: Option[Long], name: Option[String], done: Option[Int]) = {
     DB.withSession { implicit session => 
-      val x = (for  { p <- projects if p.id === id.get } yield p.doneParts )
+      println(id.get +" " + done.get)
+      val x = (for  { p <- projects if p.id === id.get } yield p.doneParts)
       val y = x.first + done.get
+      println(x.first + " from db + from form " + done.get + " = update " + y )
       x.update(y) 
-      findProjById(id.get).get
     }
   } 
 

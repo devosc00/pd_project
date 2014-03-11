@@ -33,13 +33,13 @@ table.users em {
 }
 
 table.users .col3, table.users .col4 {
-    width: 10%;
+    width: 15%;
     min-width: 100px;
 }
 
 table.users .col5 {
-    width: 30%;
-    min-width: 300px;
+    width: 15%;
+    min-width: 100px;
 }
 
 table.users .header a {
@@ -60,7 +60,7 @@ style.black-mail {
     position: relative;
 }
 
-#actions #add {
+#actions #add #add1 #add2{
     position: absolute;
     right: 0;
     top: 0;

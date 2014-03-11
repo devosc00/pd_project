@@ -1,2 +1,8 @@
 #message
 users.list.title={0,choice,0#Brak|1#Jeden użytkownik|1<{0,number,integer} użytkowników}
+
+projects.list.title={0,choice,0#Brak|1#Jeden projekt|1<{0,number,integer} projekty|4<{0,number,integer} projektów}
+
+opProjects.list.title={0,choice,0#Brak|1#Jeden projekt|1<{0,number,integer} projekty|4<{0,number,integer} projektów}
+
+salesProjects.list.title={0,choice,0#Brak|1#Jeden projekt|1<{0,number,integer} projekty|4<{0,number,integer} projektów}

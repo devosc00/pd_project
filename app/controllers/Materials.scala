@@ -45,9 +45,13 @@ object Materials extends Controller with AuthElement with AuthConfigImpl {
 
   def save(compId: Long) = StackAction(AuthorityKey -> LocalAdministrator){ 
     implicit rs => 
+    println(compId + " save material ")
     materialForm.bindFromRequest.fold(
     formWithErrors => BadRequest(html.material.create(compId, formWithErrors)),
-      mat => { DbApi.insertMat(compId, mat)
+      mat => { 
+
+        println(mat + " save material ")
+        DbApi.insertMat(compId, mat)
       Redirect(routes.ResolveUser.index).flashing("success" -> s" ${mat.name} został dodany")
         }
       )

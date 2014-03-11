@@ -32,11 +32,11 @@
     <div id="actions">
         
         @helper.form(action=routes.Projects.projList(compID)) {
-            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Filter by name...">
-            <input type="submit" id="searchsubmit" value="Filter by name" class="btn primary">
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Szukaj po nazwie...">
+            <input type="submit" id="searchsubmit" value="Szukaj" class="btn primary">
         }
 
-        <a class="btn success" id="addMaterial" href="@routes.Materials.create(compID)">Dodaj materiał</a>
+        <a class="btn success" id="add1" href="@routes.Materials.create(compID)">Dodaj materiał</a>
         <a class="btn success" id="add" href="@routes.Projects.create(compID)">Dodaj projekt</a>
         
     </div>
@@ -49,7 +49,10 @@
                     @header(2, "Nazwa")
                     @header(3, "Data rozpoczęcia")
                     @header(4, "Data zakończenia")
-                    @header(5, "Wykonanie")
+                    @header(5, "Zamówone")
+                    @header(6, "Gotowe")
+                    @header(7, "Wykonanie")
+                
                 </tr>
             </thead>
             <tbody>
@@ -58,9 +61,9 @@
                     case (project, account) => {
                         <tr>
                             <td><a href="@routes.Projects.start(project.id.get)">@project.name.get</a>
-                                 @if(project.doneParts == None){
+                                 @if(project.doneParts == 0){
                                 <em>Oczekuje</em>
-                                 } @if(project.doneParts != None && project.doneParts.get < project.ordered.get){
+                                 } @if(project.doneParts != 0 && project.doneParts.get < project.ordered.get){
                                 <em>W produkcji</em>
                                  }
                             </td>
@@ -69,6 +72,12 @@
                             </td>
                             <td>
                                 @project.endDate
+                            </td>
+                            <td>
+                                @project.ordered
+                            </td>
+                            <td>
+                                @project.doneParts
                             </td>
                             <td>
                                 <a href="@routes.Users.edit(account.id.get)">@account.name</a>
