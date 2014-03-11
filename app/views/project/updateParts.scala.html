@@ -1,0 +1,35 @@
+@(id: Long, editPart: Form[Project])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@main {
+    
+    <h1>Wykonane sztuki</h1>
+
+    <h2>Projekt</>
+    <h2>@editPart.get.name</h2>
+    
+    @helper.form(routes.Projects.saveDoneParts(id)) {
+        
+        <fieldset>
+
+       <div class="input">
+       <input type="hidden" id="id" name="id" value="@editPart.get.id" >
+    <input type="hidden" id="name" name="name" value="@editPart.get.name" >
+     	</div>
+        
+            @inputText(editPart("doneParts"), '_label -> "Wykonane sztuki")
+
+           
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Dodaj" class="btn primary"> albo 
+            <a href="@routes.ResolveUser.index" class="btn">Anuluj</a> 
+        </div>
+        
+    }
+    
+}

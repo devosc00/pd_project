@@ -45,6 +45,10 @@ table.users .col5 {
 table.users .header a {
 }
 
+.center {
+    float: right
+}
+
 style.black-mail {
     margin:30px;
 }

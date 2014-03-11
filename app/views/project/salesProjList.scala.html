@@ -1,15 +1,14 @@
-@(currentPage: Page[(Account, Company)], currentOrderBy: Int, currentFilter: String)(implicit flash: play.api.mvc.Flash)
+@(currentPage: Page[(Project, Account)], currentOrderBy: Int, currentFilter: String, compID: Long)(implicit flash: play.api.mvc.Flash)
 
 @****************************************
 * Helper generating navigation links    *
 ****************************************@
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
-    routes.Users.list(newPage, newOrderBy.map { orderBy =>
+    routes.Projects.salesProjList(compID, newPage, newOrderBy.map { orderBy =>
         if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
     }.getOrElse(currentOrderBy), currentFilter)
     
 }
-
 @**********************************
 * Helper generating table headers *
 ***********************************@
@@ -22,7 +21,7 @@
 
 @main {
     
-    <h1>@Messages("users.list.title", currentPage.total)</h1>
+    <h1>@Messages("salesProjects.list.title", currentPage.total)</h1>
 
     @flash.get("success").map { message =>
         <div class="alert-message warning">
@@ -32,58 +31,54 @@
 
     <div id="actions">
         
-        @helper.form(action=routes.Users.list()) {
+        @helper.form(action=routes.Projects.projList(compID)) {
             <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Szukaj po nazwie...">
             <input type="submit" id="searchsubmit" value="Szukaj" class="btn primary">
         }
 
-        <a class="btn success" id="add" href="@routes.Companies.create()">Dodaj Firmę</a>
-        <a class="btn success" id="add1" href="@routes.Users.create()">Dodaj użytkownika</a>
         
     </div>
     
-    @Option(currentPage.items).filterNot(_.isEmpty).map { users =>
+    @Option(currentPage.items).filterNot(_.isEmpty).map { projects =>
         
-        <table class="users zebra-striped">
+        <table class="projects zebra-striped">
             <thead>
                 <tr>
                     @header(2, "Nazwa")
-                    @header(3, "Adres e-mail")
-                    @header(4, "Stanowisko")
-                    @header(5, "Firma")
-                    @header(6, "Miejscowość")
-                    @header(7, "Telefon")
+                    @header(3, "Data rozpoczęcia")
+                    @header(4, "Data zakończenia")
+                    @header(5, "Zamówone")
+                    @header(6, "Gotowe")
+                    @header(7, "Wykonanie")
+                
                 </tr>
             </thead>
             <tbody>
-                @users.map { 
-                    case (account, company) => {
+
+                @projects.map { 
+                    case (project, account) => {
                         <tr>
-                            <td>
-                            @if(account.name == "Robert Adamski") {
-                            @account.name
-                        } else {
-                                <a href="@routes.Users.edit(account.id.get)">@account.name</a>
-                                }
+                            <td>@project.name.get
+                                 @if(project.doneParts.get == 0 && project.doneParts.get != project.ordered.get){
+                                <em>Oczekuje</em>
+                                 } @if(project.doneParts.get != 0 && project.doneParts.get < project.ordered.get){
+                                <em>W produkcji</em>
+                                 }
                             </td>
                             <td>
-                                @account.email
+                                @project.startDate
                             </td>
                             <td>
-                                @account.position
+                                @project.endDate
                             </td>
                             <td>
-                            @if(account.permission == "Administrator") {
-                            @company.name
-                        } else {
-                                <a href="@routes.Companies.edit(company.id.get)">@company.name</a>
-                                }
+                                @project.ordered
                             </td>
-                             <td>
-                                @company.city
+                            <td>
+                                @project.doneParts
                             </td>
-                             <td>
-                                @company.phone
+                            <td>
+                                @account.name
                             </td>
                         </tr>
                     }
@@ -104,7 +99,7 @@
                     </li>
                 }
                 <li class="current">
-                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + users.size) of @currentPage.total</a>
+                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + projects.size) of @currentPage.total</a>
                 </li>
                 @currentPage.next.map { page =>
                     <li class="next">
@@ -121,7 +116,7 @@
     }.getOrElse {
         
         <div class="well">
-            <em>Nie ma użytkownika</em>
+            <em>Nie ma projektu</em>
         </div>
         
     }

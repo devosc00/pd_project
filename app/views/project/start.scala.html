@@ -1,0 +1,63 @@
+@(id: Long, compId: Long, projectForm: Form[Project], accOpt: Seq[(String, String)], matOpt: Seq[(String, String)])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+
+@main {
+    
+    <h1>Rozpocznij projekt</h1>
+
+    
+
+       <div id="actions">
+        
+        <form action="@routes.Projects.delete(id)" method="POST">
+           <input type="submit" value="Usuń" style="float: right;" class="btn danger" >
+        </form>
+       </div>
+    
+    
+    @form(routes.Projects.saveStart(id)) {
+
+
+     <div class="input">
+      <input type="hidden" id="name" name="name" value="@projectForm.get.name" >
+
+      <h2> @projectForm.get.name </h2>
+      </div>
+
+        
+        <fieldset>
+        
+            @inputText(projectForm("startDate"), '_label -> "Data rozpoczęcia")
+            @inputText(projectForm("endDate"), '_label -> "Data zakończenia")
+            @inputText(projectForm("ordered"), '_label -> "Zamówione sztuki") 
+            @inputText(projectForm("matAmount"), '_label -> "Ilość materiału") 
+            
+            @select(
+                projectForm("accID"), 
+                accOpt, 
+                '_label -> "Pracownik", '_default -> "-- Wybierz pracownika --",
+                '_showConstraints -> false
+            )
+            
+            @select(
+                projectForm("matID"), 
+                matOpt, 
+                '_label -> "Materiał", '_default -> "-- Wybierz materiał --",
+                '_showConstraints -> false
+            ) 
+          
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Potwierdź" class="btn primary"> albo 
+            <a href="@routes.ResolveUser.index" class="btn">Anuluj</a> 
+        </div>
+
+        
+    }
+    
+}

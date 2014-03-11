@@ -1,0 +1,46 @@
+@(id: Long, projectForm: Form[Project], accOpt: Seq[(String, String)], matOpt: Seq[(String, String)])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+
+@main {
+    
+    <h1>Nowy projekt</h1>
+    
+    @form(routes.Projects.saveNew(id)) {
+        
+        <fieldset>
+        
+            @inputText(projectForm("name"), '_label -> "Nazwa")
+            @inputText(projectForm("startDate"), '_label -> "Data rozpoczęcia")
+            @inputText(projectForm("endDate"), '_label -> "Data zakończenia")
+            @inputText(projectForm("ordered"), '_label -> "Zamówione sztuki") 
+            @inputText(projectForm("matAmount"), '_label -> "Ilość materiału") 
+            
+            @select(
+                projectForm("accID"), 
+                accOpt, 
+                '_label -> "Pracownik", '_default -> "-- Wybierz pracownika --",
+                '_showConstraints -> false
+            )
+            
+            @select(
+                projectForm("matID"), 
+                matOpt, 
+                '_label -> "Materiał", '_default -> "-- Wybierz materiał --",
+                '_showConstraints -> false
+            )
+           
+          
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Potwierdź" class="btn primary"> albo 
+            <a href="@routes.ResolveUser.index" class="btn">Anuluj</a> 
+        </div>
+        
+    }
+    
+}

@@ -10,21 +10,19 @@ import play.api.test.Helpers._
  * You can mock out a whole application including requests, plugins etc.
  * For more information, consult the wiki.
  */
-@RunWith(classOf[JUnitRunner])
+import controllers._
+import jp.t2v.lab.play2.auth.test.Helpers._
+import java.io.File
+
 class ApplicationSpec extends Specification {
 
-  "Application" should {
+  object config extends AuthConfigImpl
 
-    "send 404 on a bad request" in new WithApplication{
-      route(FakeRequest(GET, "/boum")) must beNone
-    }
-
-    "render the index page" in new WithApplication{
-      val home = route(FakeRequest(GET, "/")).get
-
-      status(home) must equalTo(OK)
-      contentType(home) must beSome.which(_ == "text/html")
-      contentAsString(home) must contain ("Your new application is ready.")
+  "Messages" should {
+    "return list when user is authorized" in new WithApplication(FakeApplication(additionalConfiguration = inMemoryDatabase(name = "default", options = Map("DB_CLOSE_DELAY" -> "-1")))) {
+      val res = Users.create(FakeRequest().withLoggedIn(config)(1))
+      contentType(res) must beSome("text/html")
     }
   }
+
 }
