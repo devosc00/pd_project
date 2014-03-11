@@ -30,10 +30,11 @@ object Materials extends Controller with AuthElement with AuthConfigImpl {
   		"name" -> nonEmptyText,
   		"createDate" -> optional(date("yyyy-MM-dd")),
   		"tAmount" -> optional(of[Float]),
-      "compID" -> longNumber
+      "compID" -> optional(longNumber)
   		)((id, name, createDate, tAmount, compID) =>
   		Material(id, name, DbApi.date2sql(createDate), tAmount, compID))
-  		((m: Material) => Some((m.id, m.name, m.createDate.asInstanceOf[Option[java.util.Date]], m.tAmount, m.compID)))
+  		((m: Material) => Some((m.id, m.name, m.createDate.asInstanceOf[Option[java.util.Date]],
+       m.tAmount, m.compID)))
   	)
 
   

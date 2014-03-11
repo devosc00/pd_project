@@ -57,4 +57,37 @@ object Companies extends Controller with AuthElement with AuthConfigImpl{
       })
   }
 
+
+ 
+  def edit(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+     {
+      DbApi.findCompById(pk) match {
+        case Some(e) => Ok(html.company.editCompany(pk, companyForm.fill(e)))
+        case None => NotFound
+      }
+    }
+  }
+
+
+  def update(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+       {
+      println("update form filled")
+      companyForm.bindFromRequest.fold(
+        formWithErrors => BadRequest(html.company.editCompany(pk, formWithErrors)),
+        entity => {
+          println(entity)
+          DbApi.updateComp(pk, entity)
+          Redirect(routes.ResolveUser.index).flashing("success" -> s" ${entity.name} został uaktualniony")
+        })
+    }
+  }
+
+
+  def delete(id: Long) = StackAction(AuthorityKey -> LocalAdministrator) { implicit rs =>
+    DbApi.deleteCompany(id)
+    Redirect(routes.ResolveUser.index).flashing("success" -> s"Został usunięty")
+  }
+
+
+
 }

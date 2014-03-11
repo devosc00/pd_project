@@ -101,7 +101,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
       entity => { 
         
           DbApi.insert(entity)
-          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został dodany")
+          Redirect(routes.ResolveUser.index).flashing("success" -> s" ${entity.name} został dodany")
         
       })
   }
@@ -114,12 +114,30 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
   }
 
 
+  def createOperator(compID: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+        { 
+          Ok(html.account.createOperator(accForm, compID))
+        }
+  }
+
+
   def saveLocalAdmin(id: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
       accForm.bindFromRequest.fold(
       formWithErrors => BadRequest(html.account.createLocalAdmin(formWithErrors, id)),
       entity => { 
           DbApi.insert(entity)
-          Redirect(routes.Users.list(0, 2, "")).flashing("success" -> s" ${entity.name} został dodany")
+          Redirect(routes.Users.createOperator(id)).flashing("success" -> s" ${entity.name} został dodany")
+        
+      })
+  }
+
+
+  def saveOperator(id: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
+      accForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(html.account.createOperator(formWithErrors, id)),
+      entity => { 
+          DbApi.insert(entity)
+          Redirect(routes.ResolveUser.index).flashing("success" -> s" ${entity.name} został dodany")
         
       })
   }
@@ -151,7 +169,7 @@ object Users extends Controller with AuthElement with AuthConfigImpl {
 
   def delete(pk: Long) = StackAction(AuthorityKey -> Administrator) { implicit rs =>
     	 {
-      Redirect(routes.Users.list(0, 2, "")).flashing(DbApi.delete(pk) match {  
+      Redirect(routes.ResolveUser.index).flashing(DbApi.delete(pk) match {  
         case 0 => "failure" -> "Nie został usunięty"
         case x => "success" -> s"Został usunięty (deleted $x row(s))"
       })

@@ -63,7 +63,7 @@
                             <td><a href="@routes.Projects.start(project.id.get)">@project.name.get</a>
                                  @if(project.doneParts == 0){
                                 <em>Oczekuje</em>
-                                 } @if(project.doneParts != 0 && project.doneParts.get < project.ordered.get){
+                                 } @if(project.doneParts.get != 0 && project.doneParts.get < project.ordered.get){
                                 <em>W produkcji</em>
                                  }
                             </td>

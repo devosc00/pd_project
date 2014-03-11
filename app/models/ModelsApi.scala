@@ -102,6 +102,12 @@ object DbApi extends DAO {
   }
 
 
+  def findCompById(id: Long): Option[Company] = {
+      DB.withSession { implicit session =>
+      companies.where(_.id === id).firstOption
+    }
+  }
+
 
  def findProjById(id: Long): Option[Project] = {
       DB.withSession { implicit session =>
@@ -270,7 +276,7 @@ object DbApi extends DAO {
     println(mat + " insert material ")
     DB.withSession { implicit session =>
       println(mat)
-      val matToinsert = Material(mat.id, mat.name, mat.createDate, mat.tAmount, compID)
+      val matToinsert = Material(mat.id, mat.name, mat.createDate, mat.tAmount, Option(compID))
       materials.insert(matToinsert)
     }
   }
@@ -284,6 +290,18 @@ object DbApi extends DAO {
       newCompID = (companies returning companies.map(_.id)) insert(comp)
       println(newCompID)
       
+    }
+  }
+
+
+  def updateComp(compID: Long, comp: Company) {
+    println(comp + " insert Company ")
+    DB.withSession { implicit session =>
+      println(comp)
+     /* val comToUpdate = Company(comp.id, comp.name, comp.createDate, comp.tAmount, Option(compID))
+      companies.insert(comToUpdate)*/
+      val compToUpdate = comp.copy(Some(compID))
+        companies.where(_.id === compID).update(compToUpdate)
     }
   }
 
@@ -315,7 +333,7 @@ object DbApi extends DAO {
   }
   
 
-  def deleteComp(id: Long) = {
+  def deleteCompany(id: Long) = {
     DB.withSession { implicit session =>
     companies.where(_.id === id).delete
     }

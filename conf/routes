@@ -24,12 +24,16 @@ GET     /users/new           		 controllers.Users.create
 POST    /users/new               	 controllers.Users.save
 GET     /users/newLocal           	 controllers.Users.createLocalAdmin
 POST    /users/newLocal/:id          controllers.Users.saveLocalAdmin(id: Long)
+GET     /users/operator/:id          controllers.Users.createOperator(id: Long)
+POST    /users/operator/:id          controllers.Users.saveOperator(id: Long)
 GET		/projects/new/:id			 controllers.Projects.create(id: Long)
 POST	/projects/new/:id			 controllers.Projects.saveNew(id: Long)
 GET		/materials/new/:id			 controllers.Materials.create(id: Long)
 POST	/materials/new/:id			 controllers.Materials.save(id: Long)
 
 # Edit existing 
+GET     /company/:id           		 controllers.Companies.edit(id: Long)
+POST    /company/:id           		 controllers.Companies.update(id: Long)
 GET     /users/:id                	 controllers.Users.edit(id:Long)
 POST    /users/:id                	 controllers.Users.update(id:Long)
 GET		/projects/newStart/:id		 controllers.Projects.start(id: Long)
@@ -40,6 +44,7 @@ POST 	/projects/parts/:id 	 	 controllers.Projects.saveDoneParts(id: Long)
 # Delete
 POST    /users/:id/delete         	 controllers.Users.delete(id:Long)
 POST    /project/:id/delete          controllers.Projects.delete(id:Long)
+POST    /company/:id/delete          controllers.Companies.delete(id:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                controllers.Assets.at(path="/public", file)
