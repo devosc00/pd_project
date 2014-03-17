@@ -73,7 +73,7 @@
                                 @account.position
                             </td>
                             <td>
-                            @if(account.permission == "Administrator") {
+                            @if(account.permission.toString == "Administrator") {
                             @company.name
                         } else {
                                 <a href="@routes.Companies.edit(company.id.get)">@company.name</a>
