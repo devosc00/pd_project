@@ -1,0 +1,41 @@
+@(pk: Long, compForm: Form[Company])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@main {
+    
+    <h1>Edycja</h1>
+    
+    @form(routes.Companies.update(pk)) {
+
+
+   
+    
+        <fieldset>
+        
+            @inputText(compForm("name"),  '_label -> "Nazwa Firmy")
+            @inputText(compForm("city"), '_label -> "Miejscowość")
+            @inputText(compForm("street"), '_label -> "Adres")
+            @inputText(compForm("phone"), '_label -> "Telefon")
+          
+
+          
+            
+        </fieldset>
+
+
+        
+        <div class="actions">
+            <input type="submit" value="Zapisz" class="btn primary"> albo
+            <a href="@routes.ResolveUser.index" class="btn">Anuluj</a> 
+        </div>
+        
+    }
+
+     @form(routes.Companies.delete(pk), 'class -> "topRight") {
+        <input type="submit" value="Usuń" class="btn danger">
+    }
+
+}

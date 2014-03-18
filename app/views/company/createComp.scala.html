@@ -1,0 +1,30 @@
+@( compForm: Form[Company])
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@main {
+    
+    <h1>Dodaj Firmę</h1>
+    
+    @helper.form(routes.Companies.save) {
+        
+        <fieldset>
+        
+            @inputText(compForm("name"), '_label -> "Nazwa Firmy")
+            @inputText(compForm("city"), '_label -> "Miejscowość")
+            @inputText(compForm("street"), '_label -> "Ulica")
+            @inputText(compForm("phone"), '_label -> "Telefon")
+
+           
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Dodaj" class="btn primary"> albo 
+            <a href="@routes.Users.list()" class="btn">Anuluj</a> 
+        </div>
+        
+    }
+    
+}

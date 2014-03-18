@@ -4,14 +4,14 @@ import play.api.db.slick.Config.driver.simple._
 import scala.reflect.runtime.universe._
 import play.api.db.DB
 import play.api.Play.current
-import java.util.Date
-import java.sql.{ Date => SqlDate }
+//import java.util.Date
+import java.sql.Date
 import scala.slick.lifted.Tag
 import java.sql.Timestamp
 
 case class AccDetail (
 	id: Option[Long],
-	startDate: Date,
+	startDate: Option[Date],
 	projectCouter: Int,
 	accID: Long,
 	projDetailID: Long )
@@ -19,7 +19,7 @@ case class AccDetail (
 
 class AccDetails (tag: Tag) extends Table [AccDetail] (tag, "ACC_DETAIL") {
 
-	implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
+	//implicit val dateColumnType = MappedColumnType.base[Date, Long](d => d.getTime, d => new Date(d))
 
 	def id = column [Long] ("ID", O.PrimaryKey, O.AutoInc)
 	def startDate = column [Date] ("START_DATE")
@@ -27,7 +27,7 @@ class AccDetails (tag: Tag) extends Table [AccDetail] (tag, "ACC_DETAIL") {
 	def accID = column [Long] ("ACC_ID")
 	def projDetailID = column [Long] ("PROJ_DETAIL_ID")
 
-	def * = (id.?, startDate, projectCouter, accID, projDetailID) <> (AccDetail.tupled, AccDetail.unapply)
+	def * = (id.?, startDate.?, projectCouter, accID, projDetailID) <> (AccDetail.tupled, AccDetail.unapply)
 
 	def accountFK = foreignKey ("ACCOUNT_FK", accID, DbApi.accounts)(_.id)
 	def projDetailFK = foreignKey ("PROJ_DETAIL_FK", projDetailID, DbApi.projDetails)(_.id)

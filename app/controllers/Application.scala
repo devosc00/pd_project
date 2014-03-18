@@ -34,13 +34,17 @@ object Application extends Controller with LoginLogout with AuthConfigImpl {
 
 
   val loginForm = Form {
-    mapping("email" -> email, "password" -> text)(DbApi.authenticate)(_.map(u => (u.email, "")))
+    mapping("email" -> email, "password" -> optional(text))(DbApi.authenticate)(_.map(u => 
+      (u.email, Option[String](""))))
       .verifying("Błędny adres email lub hasło", result => result.isDefined)
   }
 
-  def index = Action {
-  	implicit request => Ok ("hello index")
-  }
+
+/*  def index = Action { implicit request => 
+    val user = loggedIn
+    println(user)
+    Ok ("hello index")
+  }*/
 
   def login = Action { implicit request =>
     println("start login")
@@ -56,7 +60,7 @@ object Application extends Controller with LoginLogout with AuthConfigImpl {
     loginForm.bindFromRequest.fold(
       formWithErrors => { println("form eror") 
         Future.successful(BadRequest(html.login(formWithErrors))) },
-      user => gotoLoginSucceeded(user.get.id.getOrElse(0.asInstanceOf[Long])))
+      user           => gotoLoginSucceeded(user.get.id.getOrElse(0.asInstanceOf[Long])))
   }
 }
 
@@ -75,7 +79,7 @@ trait AuthConfigImpl extends AuthConfig {
   def resolveUser(id: Id)(implicit ctx: ExecutionContext) = Future.successful(DbApi.findById(id))
 
   def loginSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext) = 
-    Future.successful(Redirect(routes.Application.index))
+    Future.successful(Redirect(routes.ResolveUser.index))
 
   def logoutSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext) = 
     Future.successful(Redirect(routes.Application.login))

@@ -6,66 +6,76 @@ create table "ACCOUNT" (
 	"EMAIL" VARCHAR(254) NOT NULL,
 	"PASS" VARCHAR(254) NOT NULL,
 	"NAME" VARCHAR(254) NOT NULL,
-	"POSITION" VARCHAR(254) NOT NULL,
+	"POSITION" VARCHAR(254),
 	"PERMISSION" VARCHAR(254) NOT NULL,
 	"COMP_ID" BIGINT NOT NULL);
 
 create table "ACC_DETAIL" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
-	"START_DATE" BIGINT NOT NULL,
-	"PROJECT_COUTER" INTEGER NOT NULL,
+	"START_DATE" DATE,
+	"PROJECT_COUNTER" INTEGER,
 	"ACC_ID" BIGINT NOT NULL,
 	"PROJ_DETAIL_ID" BIGINT NOT NULL);
 
 create table "COMPANY" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
 	"NAME" VARCHAR(254) NOT NULL,
-	"CITY" VARCHAR(254) NOT NULL,
-	"STREET" VARCHAR(254) NOT NULL,
-	"PHONE" VARCHAR(254) NOT NULL,
-	"CREATE_DATE" BIGINT NOT NULL,
-	"ORDERS" INTEGER NOT NULL);
+	"CITY" VARCHAR(254),
+	"STREET" VARCHAR(254),
+	"PHONE" VARCHAR(254),
+	"CREATE_DATE" DATE,
+	"ORDERS" INTEGER);
 
 create table "MATERIAL" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
 	"NAME" VARCHAR(254) NOT NULL,
-	"DATE" BIGINT NOT NULL,
-	"TOTAL_AMOUNT" FLOAT NOT NULL);
+	"DATE" DATE,
+	"TOTAL_AMOUNT" FLOAT,
+	"COMP_ID" BIGINT);
 
 create table "PROJECT" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
 	"NAME" VARCHAR(254) NOT NULL,
-	"START_DATE" BIGINT NOT NULL,
-	"END_DATE" BIGINT NOT NULL,
-	"ORDERED" INTEGER NOT NULL,
-	"MAT_AMOUNT" FLOAT NOT NULL,
-	"DONE_PARTS" INTEGER NOT NULL,
+	"START_DATE" DATE,
+	"END_DATE" DATE,
+	"ORDERED" INTEGER,
+	"MAT_AMOUNT" FLOAT,
+	"DONE_PARTS" INTEGER,
 	"ACC_ID" BIGINT NOT NULL,
-	"MAT_ID" BIGINT NOT NULL);
+	"MAT_ID" BIGINT);
 
 create table "PROJ_DETAIL" (
 	"ID" BIGSERIAL NOT NULL PRIMARY KEY,
-	"NAME" VARCHAR(254) NOT NULL,
-	"TOTAL_START" BIGINT NOT NULL,
-	"ITEM_TIME" FLOAT NOT NULL,
-	"TOTAL_ITEMS" INTEGER NOT NULL,
-	"SALDO" INTEGER NOT NULL,
-	"ORDER_COUTER" INTEGER NOT NULL,
-	"TOTAL_MAT" FLOAT NOT NULL,
+	"NAME" VARCHAR(254),
+	"TOTAL_START" DATE,
+	"ITEM_TIME" FLOAT,
+	"TOTAL_ITEMS" INTEGER,
+	"SALDO" INTEGER,
+	"ORDER_COUNTER" INTEGER,
+	"TOTAL_MAT" FLOAT,
 	"PROJ_ID" BIGINT NOT NULL);
 
-alter table "ACCOUNT" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID") on update NO ACTION on delete NO ACTION;
-alter table "ACC_DETAIL" add constraint "ACCOUNT_FK" foreign key("ACC_ID") references "ACCOUNT"("ID") on update NO ACTION on delete NO ACTION;
-alter table "ACC_DETAIL" add constraint "PROJ_DETAIL_FK" foreign key("PROJ_DETAIL_ID") references "PROJ_DETAIL"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJECT" add constraint "ACC_FK" foreign key("ACC_ID") references "ACCOUNT"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJECT" add constraint "MAT_FK" foreign key("MAT_ID") references "MATERIAL"("ID") on update NO ACTION on delete NO ACTION;
-alter table "PROJ_DETAIL" add constraint "PROJ_FK" foreign key("PROJ_ID") references "PROJECT"("ID") on update NO ACTION on delete NO ACTION;
+alter table "ACCOUNT" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "ACC_DETAIL" add constraint "ACCOUNT_FK" foreign key("ACC_ID") references "ACCOUNT"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "ACC_DETAIL" add constraint "PROJ_DETAIL_FK" foreign key("PROJ_DETAIL_ID") references "PROJ_DETAIL"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "MATERIAL" add constraint "COMP_FK" foreign key("COMP_ID") references "COMPANY"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJECT" add constraint "ACC_FK" foreign key("ACC_ID") references "ACCOUNT"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJECT" add constraint "MAT_FK" foreign key("MAT_ID") references "MATERIAL"("ID")
+  on update CASCADE on delete CASCADE;
+alter table "PROJ_DETAIL" add constraint "PROJ_FK" foreign key("PROJ_ID") references "PROJECT"("ID")
+  on update CASCADE on delete CASCADE;
 
 # --- !Downs
 
 alter table "ACCOUNT" drop constraint "COMP_FK";
 alter table "ACC_DETAIL" drop constraint "ACCOUNT_FK";
 alter table "ACC_DETAIL" drop constraint "PROJ_DETAIL_FK";
+alter table "MATERIAL" drop constraint "COMP_FK";
 alter table "PROJECT" drop constraint "ACC_FK";
 alter table "PROJECT" drop constraint "MAT_FK";
 alter table "PROJ_DETAIL" drop constraint "PROJ_FK";

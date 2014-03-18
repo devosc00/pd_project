@@ -1,0 +1,127 @@
+@(currentPage: Page[(Project, Account)], currentOrderBy: Int, currentFilter: String, compID: Long)(implicit flash: play.api.mvc.Flash)
+
+@****************************************
+* Helper generating navigation links    *
+****************************************@
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+    routes.Projects.projList(compID, newPage, newOrderBy.map { orderBy =>
+        if(orderBy == scala.math.abs(currentOrderBy)) -currentOrderBy else orderBy
+    }.getOrElse(currentOrderBy), currentFilter)
+    
+}
+@**********************************
+* Helper generating table headers *
+***********************************@
+@header(orderBy: Int, title: String) = {
+    <th class="col@orderBy header @if(scala.math.abs(currentOrderBy) == orderBy) @{if(currentOrderBy < 0) "headerSortDown" else "headerSortUp"}">
+        <a href="@link(0, Some(orderBy))">@title</a>
+    </th>
+}
+
+
+@main {
+    
+    <h1>@Messages("projects.list.title", currentPage.total)</h1>
+
+    @flash.get("success").map { message =>
+        <div class="alert-message warning">
+            <strong>Done!</strong> @message
+        </div>
+    }
+
+    <div id="actions">
+        
+        @helper.form(action=routes.Projects.projList(compID)) {
+            <input type="search" id="searchbox" name="f" value="@currentFilter" placeholder="Szukaj po nazwie...">
+            <input type="submit" id="searchsubmit" value="Szukaj" class="btn primary">
+        }
+
+        <a class="btn success" id="add1" href="@routes.Materials.create(compID)">Dodaj materiał</a>
+        <a class="btn success" id="add" href="@routes.Projects.create(compID)">Dodaj projekt</a>
+        
+    </div>
+    
+    @Option(currentPage.items).filterNot(_.isEmpty).map { projects =>
+        
+        <table class="users zebra-striped">
+            <thead>
+                <tr>
+                    @header(2, "Nazwa")
+                    @header(3, "Data rozpoczęcia")
+                    @header(4, "Data zakończenia")
+                    @header(5, "Zamówone")
+                    @header(6, "Gotowe")
+                    @header(7, "Wykonanie")
+                
+                </tr>
+            </thead>
+            <tbody>
+
+                @projects.map { 
+                    case (project, account) => {
+                        <tr>
+                            <td><a href="@routes.Projects.start(project.id.get)">@project.name.get</a>
+                                 @if(project.doneParts == 0){
+                                <em>Oczekuje</em>
+                                 } @if(project.doneParts.get != 0 && project.doneParts.get < project.ordered.get){
+                                <em>W produkcji</em>
+                                 }
+                            </td>
+                            <td>
+                                @project.startDate
+                            </td>
+                            <td>
+                                @project.endDate
+                            </td>
+                            <td>
+                                @project.ordered
+                            </td>
+                            <td>
+                                @project.doneParts
+                            </td>
+                            <td>
+                                <a href="@routes.Users.edit(account.id.get)">@account.name</a>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+
+        <div id="pagination" class="pagination">
+            <ul>
+                @currentPage.prev.map { page =>
+                    <li class="prev">
+                        <a href="@link(page)">&larr; Poprzednia</a>
+                    </li> 
+                }.getOrElse {
+                    <li class="prev disabled">
+                        <a>&larr; Poprzednia</a>
+                    </li>
+                }
+                <li class="current">
+                    <a>Displaying @(currentPage.offset + 1) to @(currentPage.offset + projects.size) of @currentPage.total</a>
+                </li>
+                @currentPage.next.map { page =>
+                    <li class="next">
+                        <a href="@link(page)">Następna &rarr;</a>
+                    </li> 
+                }.getOrElse {
+                    <li class="next disabled">
+                        <a>Następna &rarr;</a>
+                    </li>
+                }
+            </ul>
+        </div>
+        
+    }.getOrElse {
+        
+        <div class="well">
+            <em>Nie ma projektu</em>
+        </div>
+        
+    }
+
+        
+}
